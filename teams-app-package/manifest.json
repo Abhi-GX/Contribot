@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "1.0.0",
+  "id": "REPLACE_WITH_AZURE_BOT_APP_ID",
+  "packageName": "com.epam.campusjunior.contributionbot",
+  "developer": {
+    "name": "EPAM Campus Junior Training",
+    "websiteUrl": "https://learn.epam.com",
+    "privacyUrl": "https://privacy.epam.com",
+    "termsOfUseUrl": "https://www.epam.com/about/who-we-are/legal-information/terms-and-conditions"
+  },
+  "name": {
+    "short": "Contribution Bot",
+    "full": "Campus Junior Training Contribution Bot"
+  },
+  "description": {
+    "short": "Check your Campus Junior contribution points and bonus.",
+    "full": "Lets Mentors, SMEs, Scrum Masters, and Product Owners ask how many eligible contribution points they have and what their bonus amount is, sourced from EPAM Learn data."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#0078D4",
+  "bots": [
+    {
+      "botId": "REPLACE_WITH_AZURE_BOT_APP_ID",
+      "scopes": ["personal", "team", "groupchat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupchat"],
+          "commands": [
+            {
+              "title": "my bonus",
+              "description": "Show your eligible contribution points and bonus amount"
+            },
+            {
+              "title": "my points",
+              "description": "Show your eligible contribution points and bonus amount"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": []
+}

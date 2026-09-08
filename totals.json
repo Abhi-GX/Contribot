@@ -1,0 +1,56 @@
+{
+  "ananya_gupta@epam.com": {
+    "name": "Ananya Gupta",
+    "email": "ananya_gupta@epam.com",
+    "eligible_points": 10.0,
+    "bonus_usd": 150.0,
+    "row_count": 2,
+    "included_statuses": {
+      "approved": 1,
+      "verified": 1
+    }
+  },
+  "priya_sharma@epam.com": {
+    "name": "Priya Sharma",
+    "email": "priya_sharma@epam.com",
+    "eligible_points": 6.0,
+    "bonus_usd": 90.0,
+    "row_count": 3,
+    "included_statuses": {
+      "verified": 3
+    }
+  },
+  "rahul_mehta@epam.com": {
+    "name": "Rahul Mehta",
+    "email": "rahul_mehta@epam.com",
+    "eligible_points": 4.0,
+    "bonus_usd": 60.0,
+    "row_count": 1,
+    "included_statuses": {
+      "approved": 1
+    }
+  },
+  "saikrishna_tammi@epam.com": {
+    "name": "Saikrishna Tammi",
+    "email": "saikrishna_tammi@epam.com",
+    "eligible_points": 3.0,
+    "bonus_usd": 45.0,
+    "row_count": 3,
+    "included_statuses": {
+      "submitted": 2,
+      "approved": 1
+    }
+  },
+  "vaibhav_raj@epam.com": {
+    "name": "Vaibhav Raj",
+    "email": "vaibhav_raj@epam.com",
+    "eligible_points": 9.0,
+    "bonus_usd": 135.0,
+    "row_count": 3,
+    "included_statuses": {
+      "approved": 1,
+      "verified": 1,
+      "submitted": 1
+    }
+  }
+}
