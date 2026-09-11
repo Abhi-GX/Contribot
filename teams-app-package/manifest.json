@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
   "manifestVersion": "1.16",
   "version": "1.0.0",
-  "id": "REPLACE_WITH_AZURE_BOT_APP_ID",
+  "id": "400dfdef-d35e-4561-95c1-57d11495c1de",
   "packageName": "com.epam.campusjunior.contributionbot",
   "developer": {
     "name": "EPAM Campus Junior Training",
@@ -25,7 +25,7 @@
   "accentColor": "#0078D4",
   "bots": [
     {
-      "botId": "REPLACE_WITH_AZURE_BOT_APP_ID",
+      "botId": "400dfdef-d35e-4561-95c1-57d11495c1de",
       "scopes": ["personal", "team", "groupchat"],
       "supportsFiles": false,
       "isNotificationOnly": false,
@@ -33,19 +33,16 @@
         {
           "scopes": ["personal", "team", "groupchat"],
           "commands": [
-            {
-              "title": "my bonus",
-              "description": "Show your eligible contribution points and bonus amount"
-            },
-            {
-              "title": "my points",
-              "description": "Show your eligible contribution points and bonus amount"
-            }
+            { "title": "my bonus", "description": "Show your eligible contribution points and bonus amount" },
+            { "title": "my points", "description": "Show your eligible contribution points and bonus amount" },
+            { "title": "my contribution", "description": "Show your eligible contribution points and bonus amount" }
           ]
         }
       ]
     }
   ],
   "permissions": ["identity", "messageTeamMembers"],
-  "validDomains": []
+  "validDomains": [
+    "communicationbot.vercel.app"
+  ]
 }

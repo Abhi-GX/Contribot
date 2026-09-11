@@ -1,0 +1,295 @@
+Challenge scenario
+You are a developer at Cymbal Direct, an online retailer. A severe winter storm is causing widespread shipping delays, leading to a massive surge in customer service inquiries. Your task is to build and deploy an AI agent capable of triaging and resolving these disrupted orders.
+
+In the Cloud Shell Editor Terminal, you will use the Antigravity CLI (agy) to integrate a mock logistics database using Model Context Protocol (MCP). This lets the agent look up order statuses and issue refunds. Next, you will create agent skills and rules. These guide the agent's compensation logic for customer loyalty tiers while enforcing coding standards. Finally, you will generate the agent infrastructure using the Google Agents CLI. Then, you will deploy the agent to Agent Runtime as a scalable API endpoint.
+
+Task 1. Set up the Cloud Shell Editor and Antigravity CLI
+In this task, you will launch the Cloud Shell Editor, configure it to show hidden files, and authenticate the Antigravity CLI (agy).
+
+Open Cloud Shell Editor
+Click Activate Cloud Shell ( Activate Cloud Shell ) in the Google Cloud console title bar.
+
+Note: Alternatively, select the console browser tab and press G then S to open the Cloud Shell terminal.
+Click Continue.
+
+When prompted to authorize Cloud Shell, click Authorize.
+
+Once the Cloud Shell terminal opens, click the Open Editor button on the Cloud Shell toolbar.
+
+In the upper right corner of the Cloud Shell Terminal panel, click the Open in new window button ( Open in new window button ).
+
+Toggle Hidden Files in the Editor
+By default, the Cloud Shell Editor hides files and folders starting with a dot (like .agents). To make them visible.
+
+Choose the View menu option at the top of the editor.
+
+Then choose the Toggle Hidden Files option.
+
+Authenticate the Antigravity CLI (agy)
+The Antigravity CLI comes pre-installed in your Cloud Shell environment. You must authenticate it and bind it to your Qwiklabs project.
+
+If the Cloud Shell Terminal panel is open, close it.
+
+Instead, use a Terminal within the Cloud Shell Editor by clicking Terminal > New Terminal.
+
+Note: This opens a Terminal pane within Cloud Shell Editor that is different from the Cloud Shell Terminal.
+Drag the top of the Terminal pane to make it large enough to display the full AGY CLI output.
+
+Set the active Google Cloud project ID as an environment variable so agy can inherit it.
+
+export GOOGLE_CLOUD_PROJECT=Project ID
+Copied!
+Start the Antigravity CLI.
+
+agy
+Copied!
+When prompted to select an authentication method, choose option 2 (Use a Google Cloud project) and press ENTER.
+
+Click the provided authorization URL to open it. You may need to CMD + Click (on a Mac) or CTRL + Click (on Windows) to open the link.
+
+Sign in using your Qwiklabs student credentials and grant the necessary permissions.
+
+Copy the generated authorization code.
+
+Paste the code back into the Cloud Shell terminal, and press ENTER.
+
+Note: You may need to drag the top of the Terminal pane higher to be able to see the prompt to input the authorization code.
+When prompted by the CLI to enter the Google Cloud project ID to use, copy and paste the following project ID and press ENTER.
+
+Project ID
+Copied!
+When prompted by the CLI to enter the Google Cloud location to use, choose us and press ENTER.
+
+Choose your desired color scheme and press ENTER.
+
+Skip the Import extensions option by pressing down to select Next.
+
+With Next highlighted, press ENTER.
+
+Choose Done to agree to the terms of service.
+
+Press ENTER to trust the current folder.
+
+In agent chat prompt type /model and press ENTER.
+
+Choose Model Name model and press ENTER.
+
+Verify the agent is responsive by typing Hello in the chat prompt and pressing ENTER.
+
+Note: If typing Hello immediately after completing setup results in an initial connection error, exit the Antigravity CLI by typing /exit and restart it by running agy.
+Task 2. Configure the CymbalLogistics MCP server
+In this task, you extend the Antigravity CLI's capabilities by registering a custom Model Context Protocol (MCP) server. Your backend engineering team has exposed Cymbal Direct's logistics database via an MCP script.
+
+Type /exit and press ENTER to return to the standard Terminal prompt.
+
+Create a new workspace directory and download the mock logistics server script.
+
+mkdir -p ~/genai144-challenge/mcp
+gcloud storage cp gs://-lab-scripts/cymbal_direct_mcp.py ~/genai144-challenge/mcp/
+cd ~/genai144-challenge
+Copied!
+Run the following command to install the required MCP dependencies.
+
+pip3 install "mcp<2" fastmcp pydantic-settings --break-system-packages
+Copied!
+To provide the MCP server definition to the Antigravity CLI for use within this project folder, create a .agents directory and an MCP configuration file by running the following commands.
+
+mkdir .agents && touch .agents/mcp_config.json
+cat << EOF > .agents/mcp_config.json
+{
+   "mcpServers": {
+      "cymbal-logistics": {
+            "command": "python3",
+            "args": [
+            "mcp/cymbal_direct_mcp.py"
+            ]
+      }
+   }
+}
+EOF
+Copied!
+Start the Antigravity CLI again.
+
+agy
+Copied!
+In the agy prompt, type /mcp to list available MCP servers and wait until your cymbal-logistics MCP server initializes.
+
+Output:
+
+MCP Server Status
+Once the MCP server has initialized, press ESC to return to the AGY CLI prompt.
+
+Enter the following to ask the agent to describe the MCP server's capabilities.
+
+What tools do you have in your cymbal-logistics MCP server?
+Copied!
+Test the tool connection by typing the following query in the agy prompt.
+
+What is the status of order CYM-EC-9921?
+Copied!
+Verify that the agent uses the tool and returns that the order is delayed due to a severe winter storm.
+
+Verify your progress
+In the agy prompt, ask the agent to generate the summary file and upload it for grading.
+
+Create a file named summary_task2.md that lists:
+- The registered MCP server name
+- The names of the three available tools registered on this server
+Upload the summary to gs://-grading/
+Copied!
+Click Check my progress to verify the objective.
+
+Verify the logistics MCP server configuration
+Task 3. Author an agent skill and workspace rule
+In this task, you use the Antigravity CLI to create a custom workspace rule and an agent skill. The workspace rule enforces coding standards, and the skill determines customer compensation rewards based on loyalty status.
+
+To establish code guidelines, ask the agent to create a workspace rule by sending the following prompt in the agy session.
+
+Add rules to a GEMINI.md file in the root of my workspace (~/genai144-challenge/). The rules must be configured as always_on and enforce the following code organization rules:
+1. All new Python code files must start with a docstring at the top of the file explaining what the file does.
+2. All new Python code files must start with a commented copyright statement for "Cymbal Direct" at the top of the file.
+3. All custom agent skills must be created in the root of the workspace under the .agents/skills/ directory.
+Copied!
+After the file has been written, ask the agent what rules it sees with the following prompt.
+
+What rules have been set for this workspace?
+Copied!
+Next, instruct the agent to create the custom agent skill. Send the following prompt in the agy session.
+
+Create an agent skill named winter-storm-triage. The skill should dictate the standard operating procedures for customers whose packages are delayed due to severe winter storms. It must:
+1. Require the agent to use get_order_status and get_customer_loyalty_info to verify the order.
+2. Apply the following compensation based on loyalty tier:
+   - Platinum: $100 credit, Next-Day Air shipping upgrade
+   - Gold: $50 credit, Next-Day Air shipping upgrade
+   - Silver: $25 credit, 3-Day Select shipping upgrade
+   - Member: $10 credit, Priority Shipping upgrade
+3. Require the agent to call issue_disruption_compensation to apply the refund.
+4. Draft an empathetic customer response detailing the resolution.
+Copied!
+Review the changes to the SKILL.md file (which will be placed under .agents/skills/winter-storm-triage/SKILL.md).
+
+Test your new skill and rule by sending the following prompt in the agy session:
+
+/winter-storm-triage a customer's package (order CYM-EC-9921) is lost in the winter storm. Please find their customer ID and loyalty tier, and write a response to the customer.
+Copied!
+Verify that the agent uses the logistics MCP tool, calculates the correct Gold tier compensation ($50 credit and Next-Day Air upgrade), and drafts the response.
+
+Verify your progress
+Ask the agent to generate the summary file.
+
+Create a file named summary_task3.md in my project directory (~/genai144-challenge/) that lists:
+- The workspace rule file name (GEMINI.md) and its trigger configuration
+- The name of the custom agent skill created for winter storm triage
+- The compensation rules (credits and shipping upgrades) for all four loyalty tiers
+- The actual response generated by the agent for order CYM-EC-9921
+Upload the summary to gs://-grading/
+Copied!
+Click Check my progress to verify the objective.
+
+Verify agent custom skill and workspace rules
+Task 4. Build an agent using Agents CLI
+Now that you have prototyped the agent's logic, you will use the Agents CLI to package it as a deployable service.
+
+Transition to Auto-Edit Mode
+To avoid having to manually approve every file creation during the scaffolding process, you will enable auto_edit mode.
+
+From within the Antigravity CLI
+Type /config and change the Tool Permission setting to always-proceed.
+
+Press ESC.
+
+When starting the Antigravity CLI
+If you have not yet launched the AGY CLI, you can start it with this flag to skip permission prompts.
+ agy --dangerously-skip-permissions
+Copied!
+Install the Agents CLI
+Open a second terminal tab in Cloud Shell (leaving agy running in the first) by clicking the + sign at the top of the Terminal.
+
+Run the following commands to install uv (Python toolchain manager) and set up the Agents CLI.
+
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+uvx google-agents-cli setup
+Copied!
+Scaffold the Agent
+Return to the first terminal tab by selecting it from the list of Terminals on the right (it should be identified as agy) and prompt the CLI to build an agent.
+
+Use your agents-cli skills to build a winter storm triage agent based on the MCP server. Name the project "winter-storm-triage" and place it inside the ~/genai144-challenge/ directory. Configure the agent to use the Model ID model using the us location.
+Copied!
+Notice how you don't have to grant permissions as frequently as you did in the previous tasks, this is because you set the Tool Permission setting to always-proceed.
+
+When complete the agent will provide a summary of what it has done.
+
+Review the summary.
+
+Test the Agent Locally
+In your second terminal tab, navigate to the new project directory and install the MCP dependencies into the project virtual environment.
+
+cd ~/genai144-challenge/winter-storm-triage
+uv pip install "mcp<2" fastmcp pydantic-settings
+Copied!
+Launch the interactive Agent Playground.
+
+agents-cli playground
+Copied!
+The terminal will start a local web server on port 8080. To view the Playground, click the Web Preview button in the top right of the Cloud Shell toolbar ( Web Preview button ), and select Preview on port 8080.
+
+In the Playground web interface, select app from the dropdown.
+
+Test the agent by asking: Where is my order CYM-EC-1002?.
+
+Verify it responds with the delay reason and the $100 compensation from the user's Platinum tier status.
+
+Output:
+
+Agent Playgroud Prompt Response
+To stop the playground, press CTRL+C in the terminal.
+
+Verify your progress
+In the terminal tab running agy, ask the agent to generate the summary.
+
+Create a file named summary_task4.md in my project directory (~/genai144-challenge/) that lists:
+- The project name of the scaffolded agent (winter-storm-triage)
+- The primary configuration file path of the scaffolded agent (app/agent.py)
+- The command used to launch the playground locally
+- The actual response generated by the local agent for order CYM-EC-1002
+Upload the summary to gs://-grading/
+Copied!
+Click Check my progress to verify the objective.
+
+Verify the scaffolded agent application prototype
+Task 5. Deploy the agent to Agent Runtime
+In this task, you will deploy your verified agent application to Agent Runtime.
+
+Ask the agent to deploy the application.
+
+Deploy the winter storm triage agent to Agent Runtime in the  region. Make sure to copy the local `cymbal_direct_mcp.py` file into the agent's `app/` directory before deployment.
+Copied!
+The deployment process may take 5 to 10 minutes.
+
+When complete you will see a summary of the deployment with the steps taken and deployment status.
+
+Once the deployment finishes, navigate to the Agent Platform > Agents > Deployments in the Google Cloud Console.
+
+Verify that the winter-storm-triage agent is listed and active.
+
+Output:
+
+Agent Deployment
+Click on the agent, go to the Playground tab and test the live deployment with the following query to verify it returns the correct Platinum tier resolution which includes offering $100 compensation.
+
+Where is my order CYM-EC-1002?
+Copied!
+Output:
+
+Agent Deployment Playground Response
+Verify your progress
+In the agy session, ask the agent to generate the summary.
+
+Create a file named summary_task5.md in my project directory (~/genai144-challenge/) that lists:
+- The live Reasoning Engine deployment resource ID (including project and location)
+- The region where the agent was deployed
+- The runtime service account email address used by the Reasoning Engine
+Upload the summary to gs://-grading/
+Copied!
+Click Check my progress to verify the objective.

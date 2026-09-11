@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/messages.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/health.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/messages",
+      "dest": "api/messages.py"
+    },
+    {
+      "src": "/api/health",
+      "dest": "api/health.py"
+    }
+  ]
+}
