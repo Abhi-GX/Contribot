@@ -3,34 +3,29 @@ agent/agent.py
 
 Gemini ADK powered Contribution Bot agent.
 
-This module defines the LlmAgent and exposes run_agent() which is the single
-entry point called from api/messages.py for every incoming Teams message.
+Entry points:
+    run_agent_async(user_message, user_email, history) -> (reply, updated_history)
 
-Architecture:
-    Teams message
-        └── api/messages.py calls run_agent(user_message, user_email)
-                └── ADK Runner executes LlmAgent with tools
-                        └── Gemini decides which tools to call
-                                └── tools.py reads from data/totals.csv
-                        └── Gemini returns natural language reply
-                └── run_agent returns reply string
-        └── api/messages.py sends reply back to Teams
+    history format:
+        [
+            {"role": "user",      "text": "what's my bonus?"},
+            {"role": "assistant", "text": "Your bonus is $225..."},
+            ...
+        ]
 
-Vercel constraint:
-    Vercel is stateless — each request is a fresh process.
-    We use InMemorySessionService with a fixed session_id derived from
-    the user's email so within a single request the agent has context,
-    but there is no cross-request memory (acceptable for now).
+    The caller (api/messages.py) manages session storage.
+    This module only handles the LLM interaction.
 
 Environment variables:
     GOOGLE_API_KEY  — Gemini API key (set in Vercel env vars)
+    GEMINI_MODEL    — optional, defaults to gemini-2.5-flash
 """
 
 from __future__ import annotations
 
 import asyncio
 import os
-from pathlib import Path
+from typing import List, Dict, Tuple
 
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
@@ -42,7 +37,7 @@ from .tools import get_contribution, get_program_info
 # ---------------------------------------------------------------------------
 # Model
 # ---------------------------------------------------------------------------
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 # ---------------------------------------------------------------------------
 # System prompt
@@ -63,9 +58,10 @@ What you can do:
 
 Rules:
 - ALWAYS use get_contribution(email) to look up data — never make up numbers
-- If the user's email is provided in the context, use it directly
-- If the user is not found, explain possible reasons clearly and suggest contacting the admin
-- Keep replies short and focused — this is a chat bot, not a report
+- The user's email is provided in the context at the start — use it directly
+- If not found, explain possible reasons and suggest contacting the admin
+- Keep replies short and focused
+- Remember the conversation context from previous messages in this session
 
 When showing contribution results, format like this:
   Hi [Name]! Here's your Campus Junior Training summary:
@@ -75,87 +71,141 @@ When showing contribution results, format like this:
   Data reflects the latest export refresh. Recent sessions may not appear yet.
 """
 
+
 # ---------------------------------------------------------------------------
-# Agent definition
+# Agent factory
 # ---------------------------------------------------------------------------
 def _make_agent() -> LlmAgent:
     return LlmAgent(
         model=MODEL,
         name="contribution_bot",
-        description="Looks up Campus Junior Training contribution points and bonus for EPAM employees.",
+        description="Looks up Campus Junior Training contribution points and bonus.",
         instruction=SYSTEM_PROMPT,
         tools=[get_contribution, get_program_info],
     )
 
 
 # ---------------------------------------------------------------------------
-# Main entry point
+# Main async entry point
 # ---------------------------------------------------------------------------
-def run_agent(user_message: str, user_email: str = "") -> str:
+async def run_agent_async(
+    user_message: str,
+    user_email: str = "",
+    history: List[Dict] = None,
+) -> Tuple[str, List[Dict]]:
     """
-    Run the Gemini ADK agent for a single Teams message and return the reply.
+    Run the agent for one turn. Returns (reply, updated_history).
 
     Args:
-        user_message: The text the user sent in Teams.
-        user_email:   The verified Teams email of the sender (resolved via
-                      TeamsInfo.get_member in api/messages.py).
-                      Empty string if identity resolution failed.
+        user_message: text the user sent
+        user_email:   verified EPAM email from Teams identity
+        history:      previous messages in this session (list of {role, text})
 
     Returns:
-        The agent's reply as a plain string (may contain markdown).
+        (reply_text, updated_history)
+        updated_history includes the new user message and bot reply appended.
     """
-    # Build message — include email as context so the agent can call
-    # get_contribution() without asking the user to type their email.
-    if user_email:
+    if history is None:
+        history = []
+
+    # Build the full message with email context injected once (only if history is empty)
+    if user_email and not history:
+        # First message in session — inject email context
         full_message = (
-            f"[Context: the user's EPAM email is {user_email}]\n\n"
+            f"[Context: the user's verified EPAM email is {user_email}. "
+            f"Use this email when calling get_contribution.]\n\n"
             f"{user_message}"
         )
     else:
         full_message = user_message
 
-    # Run async agent in a new event loop (Vercel is sync per request)
-    return asyncio.run(_run_async(full_message, user_email))
+    reply = await _run_async(full_message, user_email, history)
+
+    # Update history
+    updated_history = history + [
+        {"role": "user",      "text": user_message},
+        {"role": "assistant", "text": reply},
+    ]
+
+    return reply, updated_history
 
 
-async def _run_async(message: str, session_id_key: str) -> str:
-    """Async execution of the ADK runner."""
+# ---------------------------------------------------------------------------
+# ADK runner
+# ---------------------------------------------------------------------------
+async def _run_async(
+    message: str,
+    session_id_key: str,
+    history: List[Dict],
+) -> str:
+    """Execute the ADK agent with conversation history."""
     session_service = InMemorySessionService()
     session_id = session_id_key or "anonymous"
-    app_name = "contribution_bot"
+    app_name   = "contribution_bot"
 
-    # Create a fresh session for this request
-    session = await session_service.create_session(
+    # Create session
+    await session_service.create_session(
         app_name=app_name,
         user_id=session_id,
         session_id=session_id,
     )
 
-    agent = _make_agent()
-
+    agent  = _make_agent()
     runner = Runner(
         agent=agent,
         app_name=app_name,
         session_service=session_service,
     )
 
-    # Send message and collect the final text response
-    content = genai_types.Content(
-        role="user",
-        parts=[genai_types.Part(text=message)]
+    # Build contents list — inject history + new message
+    # ADK accepts a list of Content objects for multi-turn context
+    contents = []
+
+    # Add previous turns from history
+    for turn in history:
+        role = "user" if turn["role"] == "user" else "model"
+        contents.append(
+            genai_types.Content(
+                role=role,
+                parts=[genai_types.Part(text=turn["text"])]
+            )
+        )
+
+    # Add current message
+    contents.append(
+        genai_types.Content(
+            role="user",
+            parts=[genai_types.Part(text=message)]
+        )
     )
+
+    # Use last content as new_message, pass rest as prior context
+    new_message = contents[-1]
 
     final_reply = ""
     async for event in runner.run_async(
         user_id=session_id,
         session_id=session_id,
-        new_message=content,
+        new_message=new_message,
     ):
-        # Capture the last text response from the agent
         if event.is_final_response():
             if event.content and event.content.parts:
                 final_reply = "".join(
-                    part.text for part in event.content.parts if hasattr(part, "text")
+                    part.text
+                    for part in event.content.parts
+                    if hasattr(part, "text") and part.text
                 )
 
     return final_reply or "I'm sorry, I couldn't generate a response. Please try again."
+
+
+# ---------------------------------------------------------------------------
+# Sync wrapper (for test_agent.py)
+# ---------------------------------------------------------------------------
+def run_agent(
+    user_message: str,
+    user_email: str = "",
+    history: List[Dict] = None,
+) -> Tuple[str, List[Dict]]:
+    """Synchronous wrapper for test_agent.py."""
+    return asyncio.run(run_agent_async(user_message, user_email, history or []))

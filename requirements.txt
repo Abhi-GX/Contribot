@@ -7,3 +7,6 @@ aiohttp>=3.9.0
 # Google ADK + Gemini
 google-adk==2.9.0
 google-genai>=2.23.0
+
+# Session storage — Upstash Redis (Vercel KV)
+upstash-redis>=1.0.0
