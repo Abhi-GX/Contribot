@@ -3,24 +3,24 @@ api/messages.py
 
 Vercel serverless function — handles POST /api/messages from Teams.
 
-Session management flow per message:
-  1. Extract Teams user ID from activity (stable, unique per user)
-  2. Load session from Redis KV
+Message flow per request:
+  1. Extract Teams user ID from activity (stable unique identifier)
+  2. Load session from Redis
      - Hit:  use cached email + history (skip Graph API call)
-     - Miss: call TeamsInfo.get_member ONCE to get email, create session
-  3. Pass message + history to Gemini ADK agent
-  4. Save updated session (email + last 6 messages) back to Redis
-  5. Reply to Teams
-
-This means TeamsInfo.get_member (slow Graph API) is called ONCE per session
-(first message only), not on every message.
+     - Miss: call TeamsInfo.get_member ONCE to resolve email, create session
+  3. If session email is empty (first-call failure), retry TeamsInfo.get_member
+  4. Pre-fetch user's contribution data from CSV (synchronous, in-process)
+  5. Pass message + pre-fetched data + history to Gemini agent
+     → Gemini answers in ONE round trip for most queries (data already in context)
+  6. Save updated session back to Redis
+  7. Reply to Teams
 
 Environment variables (Vercel → Settings → Environment Variables):
     MicrosoftAppId         — Entra ID App ID
     MicrosoftAppPassword   — Entra ID client secret
     MicrosoftAppTenantId   — Entra ID tenant ID
     GOOGLE_API_KEY         — Gemini API key
-    KV_REST_API_URL        — Upstash Redis URL (auto-set by Vercel KV)
+    KV_REST_API_URL        — Upstash Redis URL  (auto-set by Vercel KV)
     KV_REST_API_TOKEN      — Upstash Redis token (auto-set by Vercel KV)
 """
 
@@ -48,6 +48,7 @@ from botbuilder.core.teams import TeamsInfo
 from botbuilder.schema import Activity
 
 from agent import run_agent_async
+from agent.tools import get_contribution
 from session_store import get_session, save_session, create_session
 
 # ---------------------------------------------------------------------------
@@ -56,6 +57,16 @@ from session_store import get_session, save_session, create_session
 APP_ID       = os.environ.get("MicrosoftAppId",       "400dfdef-d35e-4561-95c1-57d11495c1de")
 APP_PASSWORD = os.environ.get("MicrosoftAppPassword", "")
 APP_TENANT   = os.environ.get("MicrosoftAppTenantId", "b41b72d0-4e9f-4c26-8a69-f949f367c91d")
+
+
+async def _resolve_email(turn_context: TurnContext, teams_user_id: str) -> str:
+    """Call TeamsInfo.get_member and return the email, empty string on failure."""
+    try:
+        member = await TeamsInfo.get_member(turn_context, teams_user_id)
+        return (member.email or member.user_principal_name or "").strip().lower()
+    except Exception as e:
+        print(f"[messages] TeamsInfo.get_member failed: {e}", flush=True)
+        return ""
 
 
 # ---------------------------------------------------------------------------
@@ -68,32 +79,32 @@ class ContributionBot(ActivityHandler):
         if not user_message:
             return
 
-        # Teams user ID — stable unique identifier per user, no API call needed
         teams_user_id = turn_context.activity.from_property.id
 
         # ── Session lookup ─────────────────────────────────────────────────
         session = await get_session(teams_user_id)
 
         if session is None:
-            # First message from this user in this session window
-            # Call TeamsInfo.get_member ONCE to get verified email
-            try:
-                member = await TeamsInfo.get_member(turn_context, teams_user_id)
-                user_email = (
-                    member.email or member.user_principal_name or ""
-                ).strip().lower()
-            except Exception:
-                user_email = ""
-
+            user_email = await _resolve_email(turn_context, teams_user_id)
             session = await create_session(teams_user_id, user_email)
         else:
-            # Returning user — email already cached, skip Graph API call
             user_email = session.get("email", "")
+            # Retry email fetch if a previous attempt failed
+            if not user_email:
+                user_email = await _resolve_email(turn_context, teams_user_id)
+                if user_email:
+                    session["email"] = user_email
+                    await save_session(teams_user_id, session)
 
         history = session.get("history", [])
 
         # ── Send typing indicator ──────────────────────────────────────────
         await turn_context.send_activity(Activity(type="typing"))
+
+        # ── Pre-fetch contribution data (eliminates 2nd Gemini round trip) ─
+        prefetched_context = None
+        if user_email:
+            prefetched_context = get_contribution(user_email)
 
         # ── Run agent ─────────────────────────────────────────────────────
         try:
@@ -101,6 +112,7 @@ class ContributionBot(ActivityHandler):
                 user_message=user_message,
                 user_email=user_email,
                 history=history,
+                prefetched_context=prefetched_context,
             )
         except Exception:
             traceback.print_exc()
@@ -123,6 +135,7 @@ class ContributionBot(ActivityHandler):
                         "Ask me things like:\n"
                         "- `what's my bonus?`\n"
                         "- `how many points do I have?`\n"
+                        "- `who has the most contributions?`\n"
                         "- `how does the program work?`"
                     )
                 )
@@ -193,7 +206,6 @@ class handler(BaseHTTPRequestHandler):
         body = json.dumps({
             "status": "ok",
             "endpoint": "/api/messages",
-            "mode": "gemini-adk + session"
         }).encode()
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", "application/json")

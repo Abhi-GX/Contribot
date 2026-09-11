@@ -1,21 +1,14 @@
 """
-api/health.py
-
-Vercel serverless function — GET /api/health
-
-Returns a JSON payload confirming the service is up and how many people
-are currently in the totals cache. Useful for:
-  - Vercel deployment health checks
-  - Quick smoke-test after deploying a new version
-  - Confirming totals.json was bundled correctly
+api/health.py — Vercel serverless GET /api/health
 """
 
 from __future__ import annotations
 
+import csv
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
@@ -23,28 +16,23 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-TOTALS_PATH = Path(os.environ.get("TOTALS_JSON_PATH", str(ROOT / "totals.json")))
-
-
-def _load_totals() -> dict:
-    if not TOTALS_PATH.exists():
-        return {}
-    with open(TOTALS_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+CSV_PATH = Path(os.environ.get("TOTALS_CSV_PATH", str(ROOT / "data" / "totals.csv")))
 
 
 class handler(BaseHTTPRequestHandler):
-    """Vercel Python serverless entry point."""
 
     def do_GET(self):
-        totals = _load_totals()
+        people_count = 0
+        if CSV_PATH.exists():
+            with open(CSV_PATH, newline="", encoding="utf-8") as f:
+                people_count = sum(1 for _ in csv.DictReader(f))
+
         payload = {
-            "status": "ok",
-            "people_cached": len(totals),
-            "totals_file": str(TOTALS_PATH),
-            "checked_at": datetime.utcnow().isoformat() + "Z",
+            "status":        "ok",
+            "people_cached": people_count,
+            "checked_at":    datetime.now(tz=timezone.utc).isoformat(),
         }
-        body = json.dumps(payload, indent=2).encode("utf-8")
+        body = json.dumps(payload).encode("utf-8")
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))

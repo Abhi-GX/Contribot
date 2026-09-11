@@ -1,29 +1,47 @@
 """
 generate_csv.py
 
-Reads the actual Learn export Excel file and generates data/totals.csv
-using the same business logic as contribution_calc.py.
+Reads a Learn export Excel file and writes data/totals.csv.
 
-Usage:
-    python generate_csv.py
+Can be run directly:
+    python generate_csv.py                          # uses default Excel path
+    python generate_csv.py path/to/export.xlsx      # explicit path
+
+Or imported:
+    from generate_csv import generate_from_excel
+    result = generate_from_excel(Path("export.xlsx"))
 """
 
 import sys
 import csv
 from pathlib import Path
 
-# Install openpyxl if needed
 try:
     import openpyxl
 except ImportError:
-    print("Installing openpyxl...")
     import subprocess
     subprocess.run([sys.executable, "-m", "pip", "install", "openpyxl"], check=True)
     import openpyxl
 
 ROOT = Path(__file__).parent
-EXCEL_PATH = ROOT / "Contribution 07-september-2026.xlsx"
-CSV_OUT    = ROOT / "data" / "totals.csv"
+
+# Canonical output path
+CSV_OUT = ROOT / "data" / "totals.csv"
+
+# Default Excel search: explicit env var → latest_export.xlsx → dated file
+def _find_default_excel() -> Path:
+    candidates = [
+        ROOT / "data" / "latest_export.xlsx",
+        ROOT / "Contribution 07-september-2026.xlsx",
+    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    # Last resort: any .xlsx with "Contribution" in root
+    for p in ROOT.glob("Contribution*.xlsx"):
+        return p
+    return candidates[0]  # will fail with a clear message
+
 
 ELIGIBLE_STATUSES = {"submitted", "approved"}
 ELIGIBLE_FORMAT   = "group meeting with contributor"
@@ -34,28 +52,38 @@ def normalize(val):
     return str(val).strip().lower() if val is not None else ""
 
 
-def main():
-    if not EXCEL_PATH.exists():
-        print(f"ERROR: {EXCEL_PATH} not found.")
-        sys.exit(1)
+def generate_from_excel(excel_path: Path) -> dict:
+    """
+    Parse the Learn export at `excel_path` and write data/totals.csv.
 
-    print(f"Reading: {EXCEL_PATH}")
-    wb = openpyxl.load_workbook(EXCEL_PATH, read_only=True, data_only=True)
-    ws = wb.active
+    Returns:
+        {
+            "success":      bool,
+            "people_count": int,
+            "people":       [{"name", "email", "eligible_points", "bonus_usd", "row_count", "included_statuses"}, ...],
+            "error":        str | None,
+        }
+    """
+    if not excel_path.exists():
+        return {"success": False, "people_count": 0, "people": [], "error": f"File not found: {excel_path}"}
 
-    rows = list(ws.iter_rows(values_only=True))
+    try:
+        wb = openpyxl.load_workbook(excel_path, read_only=True, data_only=True)
+        ws = wb.active
+        rows = list(ws.iter_rows(values_only=True))
+        wb.close()
+    except Exception as e:
+        return {"success": False, "people_count": 0, "people": [], "error": f"Could not read Excel: {e}"}
+
     if not rows:
-        print("ERROR: Excel file is empty.")
-        sys.exit(1)
+        return {"success": False, "people_count": 0, "people": [], "error": "Excel file is empty"}
 
-    # Find headers
     headers = [normalize(h) for h in rows[0]]
-    print(f"Columns found: {headers}")
 
-    def col(name, *aliases):
-        for candidate in [name] + list(aliases):
-            if candidate in headers:
-                return headers.index(candidate)
+    def col(*aliases):
+        for a in aliases:
+            if a in headers:
+                return headers.index(a)
         return None
 
     idx_name     = col("name", "mentor", "mentor name")
@@ -65,29 +93,19 @@ def main():
     idx_points   = col("points")
     idx_verified = col("verified points")
 
-    missing = [(n, i) for n, i in [
-        ("name", idx_name), ("status", idx_status),
-        ("format", idx_format), ("points", idx_points)
-    ] if i is None]
-
+    missing = [n for n, i in [("name", idx_name), ("status", idx_status),
+                               ("format", idx_format), ("points", idx_points)] if i is None]
     if missing:
-        print(f"ERROR: Missing columns: {[n for n,_ in missing]}")
-        print(f"Available: {headers}")
-        sys.exit(1)
+        return {"success": False, "people_count": 0, "people": [],
+                "error": f"Missing columns: {missing}. Found: {headers}"}
 
-    # Aggregate per person
     people = {}
-
     for row in rows[1:]:
-        fmt    = normalize(row[idx_format])
-        status = normalize(row[idx_status])
-
-        if fmt != ELIGIBLE_FORMAT:
+        if normalize(row[idx_format]) != ELIGIBLE_FORMAT:
             continue
-        if status not in ELIGIBLE_STATUSES:
+        if normalize(row[idx_status]) not in ELIGIBLE_STATUSES:
             continue
 
-        # Effective points
         pts = 0.0
         if idx_verified is not None and row[idx_verified] not in (None, ""):
             try:
@@ -100,31 +118,20 @@ def main():
             except (ValueError, TypeError):
                 pts = 0.0
 
-        name  = str(row[idx_name]).strip()  if row[idx_name]  else ""
+        name  = str(row[idx_name]).strip() if row[idx_name] else ""
         email = str(row[idx_email]).strip().lower() if idx_email is not None and row[idx_email] else ""
         key   = email or name.lower()
+        status = normalize(row[idx_status])
 
         if key not in people:
-            people[key] = {
-                "name": name,
-                "email": email,
-                "eligible_points": 0.0,
-                "row_count": 0,
-                "statuses": {}
-            }
-
+            people[key] = {"name": name, "email": email, "eligible_points": 0.0,
+                           "row_count": 0, "statuses": {}}
         people[key]["eligible_points"] += pts
         people[key]["row_count"]       += 1
         people[key]["statuses"][status] = people[key]["statuses"].get(status, 0) + 1
 
-    wb.close()
-
-    if not people:
-        print("WARNING: No eligible rows found (Group Meeting + Submitted/Verified/Approved).")
-        print("Writing empty CSV.")
-
-    # Write CSV
     CSV_OUT.parent.mkdir(exist_ok=True)
+    rows_out = []
     with open(CSV_OUT, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=[
             "email", "name", "eligible_points", "bonus_usd", "row_count", "included_statuses"
@@ -132,19 +139,30 @@ def main():
         writer.writeheader()
         for key, p in sorted(people.items()):
             status_str = " / ".join(f"{v} {k}" for k, v in p["statuses"].items())
-            writer.writerow({
+            row = {
                 "email":             p["email"],
                 "name":              p["name"],
                 "eligible_points":   p["eligible_points"],
                 "bonus_usd":         round(p["eligible_points"] * POINT_VALUE_USD, 2),
                 "row_count":         p["row_count"],
                 "included_statuses": status_str,
-            })
+            }
+            writer.writerow(row)
+            rows_out.append(row)
 
-    print(f"\nWrote {len(people)} people to {CSV_OUT}")
-    print("\nSample (first 5):")
-    for i, (k, p) in enumerate(list(people.items())[:5]):
-        print(f"  {p['name']} ({p['email']}) — {p['eligible_points']} pts, ${p['eligible_points']*POINT_VALUE_USD:.2f}")
+    return {"success": True, "people_count": len(people), "people": rows_out, "error": None}
+
+
+def main():
+    excel_path = Path(sys.argv[1]) if len(sys.argv) > 1 else _find_default_excel()
+    print(f"Reading: {excel_path}")
+    result = generate_from_excel(excel_path)
+    if not result["success"]:
+        print(f"ERROR: {result['error']}")
+        sys.exit(1)
+    print(f"\nWrote {result['people_count']} people to {CSV_OUT}")
+    for p in result["people"][:5]:
+        print(f"  {p['name']} ({p['email']}) — {p['eligible_points']} pts, ${p['bonus_usd']:.2f}")
 
 
 if __name__ == "__main__":
