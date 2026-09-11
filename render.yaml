@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: contribot
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python generate_csv.py
+    startCommand: python app.py
+    envVars:
+      - key: MicrosoftAppId
+        sync: false
+      - key: MicrosoftAppPassword
+        sync: false
+      - key: MicrosoftAppTenantId
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: KV_REST_API_URL
+        sync: false
+      - key: KV_REST_API_TOKEN
+        sync: false
