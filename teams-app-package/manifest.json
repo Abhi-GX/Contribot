@@ -1,9 +1,9 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
   "manifestVersion": "1.16",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "id": "400dfdef-d35e-4561-95c1-57d11495c1de",
-  "packageName": "com.epam.campusjunior.contributionbot",
+  "packageName": "com.epam.kitrak.campus",
   "developer": {
     "name": "EPAM Campus Junior Training",
     "websiteUrl": "https://learn.epam.com",
@@ -11,37 +11,61 @@
     "termsOfUseUrl": "https://www.epam.com/about/who-we-are/legal-information/terms-and-conditions"
   },
   "name": {
-    "short": "Contribution Bot",
-    "full": "Campus Junior Training Contribution Bot"
+    "short": "Kitrak Campus",
+    "full": "Kitrak Campus \u2014 Contribution Assistant"
   },
   "description": {
-    "short": "Check your Campus Junior contribution points and bonus.",
-    "full": "Lets Mentors, SMEs, Scrum Masters, and Product Owners ask how many eligible contribution points they have and what their bonus amount is, sourced from EPAM Learn data."
+    "short": "Your Campus Junior contribution tracker.",
+    "full": "Kitrak Campus lets Mentors, SMEs, Scrum Masters and Product Owners instantly check their eligible contribution points and bonus from the Campus Junior Training program. Just ask naturally \u2014 no forms, no spreadsheets."
   },
   "icons": {
     "color": "color.png",
     "outline": "outline.png"
   },
-  "accentColor": "#0078D4",
+  "accentColor": "#6264A7",
   "bots": [
     {
       "botId": "400dfdef-d35e-4561-95c1-57d11495c1de",
-      "scopes": ["personal", "team", "groupchat"],
+      "scopes": [
+        "personal",
+        "team",
+        "groupchat"
+      ],
       "supportsFiles": false,
       "isNotificationOnly": false,
       "commandLists": [
         {
-          "scopes": ["personal", "team", "groupchat"],
+          "scopes": [
+            "personal",
+            "team",
+            "groupchat"
+          ],
           "commands": [
-            { "title": "my bonus", "description": "Show your eligible contribution points and bonus amount" },
-            { "title": "my points", "description": "Show your eligible contribution points and bonus amount" },
-            { "title": "my contribution", "description": "Show your eligible contribution points and bonus amount" }
+            {
+              "title": "my bonus",
+              "description": "Show your contribution points and bonus amount"
+            },
+            {
+              "title": "my points",
+              "description": "Show your eligible contribution points"
+            },
+            {
+              "title": "my contribution",
+              "description": "Full contribution summary"
+            },
+            {
+              "title": "how does it work",
+              "description": "Explain the Campus Junior program rules"
+            }
           ]
         }
       ]
     }
   ],
-  "permissions": ["identity", "messageTeamMembers"],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
   "validDomains": [
     "communicationbot.vercel.app"
   ]

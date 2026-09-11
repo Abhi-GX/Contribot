@@ -68,181 +68,316 @@ ADMIN_HTML = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contribution Bot — Admin</title>
+  <title>Contribution Bot — Administration</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f1117;
-      color: #e2e8f0;
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background: #eef1f6;
+      color: #1a2540;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1a2d5a;
+      color: #fff;
+      padding: 0 2.5rem;
+      height: 62px;
+      display: flex;
       align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid #1565c0;
+      flex-shrink: 0;
+    }
+    .header-left  { display: flex; align-items: center; gap: 0.75rem; }
+    .header-title { font-size: 1rem; font-weight: 600; letter-spacing: 0.01em; }
+    .header-sub   { font-size: 0.78rem; color: #90a8d4; margin-top: 1px; }
+    .header-badge {
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; background: #1565c0;
+      color: #cfe2ff; padding: 3px 10px; border-radius: 3px;
+    }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
       justify-content: center;
-      padding: 2rem;
+      padding: 2.5rem 1.5rem;
     }
 
-    .card {
-      background: #1a1d27;
-      border: 1px solid #2d3148;
-      border-radius: 12px;
-      padding: 2.5rem;
+    .layout {
       width: 100%;
-      max-width: 560px;
-      box-shadow: 0 4px 32px rgba(0,0,0,0.4);
-    }
-
-    .logo { font-size: 1.5rem; margin-bottom: 0.25rem; }
-    h1 { font-size: 1.1rem; font-weight: 600; color: #94a3b8; margin-bottom: 2rem; }
-
-    .stats {
-      background: #12151e;
-      border: 1px solid #2d3148;
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 2rem;
+      max-width: 860px;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
+      gap: 1.5rem;
+      align-items: start;
     }
-    .stat-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
-    .stat-value { font-size: 1.25rem; font-weight: 700; color: #e2e8f0; margin-top: 0.15rem; }
-    .stat-sub   { font-size: 0.75rem; color: #64748b; margin-top: 0.1rem; }
+
+    /* ── Cards ── */
+    .panel {
+      background: #fff;
+      border: 1px solid #d0d8e8;
+      border-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .panel-header {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid #d0d8e8;
+      background: #f5f7fb;
+      border-radius: 4px 4px 0 0;
+    }
+    .panel-header h2 {
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; color: #3a4d78;
+    }
+    .panel-body { padding: 1.25rem; }
+
+    /* ── Stats ── */
+    .stat-row {
+      display: flex; gap: 1rem; margin-bottom: 1rem;
+    }
+    .stat-box {
+      flex: 1; background: #f5f7fb; border: 1px solid #d0d8e8;
+      border-radius: 3px; padding: 0.75rem 1rem;
+    }
+    .stat-label { font-size: 0.7rem; color: #6b7a99; text-transform: uppercase;
+                  letter-spacing: 0.06em; font-weight: 600; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: #1a2d5a;
+                  margin-top: 0.2rem; line-height: 1; }
+    .stat-meta  { font-size: 0.72rem; color: #8896b3; margin-top: 0.3rem; }
+
+    .info-row { display: flex; justify-content: space-between;
+                font-size: 0.8rem; padding: 0.45rem 0;
+                border-bottom: 1px solid #edf0f7; color: #3a4d78; }
+    .info-row:last-child { border-bottom: none; }
+    .info-row span:first-child { color: #6b7a99; font-weight: 500; }
+    .info-row span:last-child  { font-weight: 600; }
+
+    /* ── Upload form ── */
+    .field-label {
+      display: block; font-size: 0.78rem; font-weight: 600;
+      color: #3a4d78; margin-bottom: 0.45rem; letter-spacing: 0.01em;
+    }
+    .field-note {
+      font-size: 0.72rem; color: #8896b3; margin-bottom: 1rem;
+    }
 
     .drop-zone {
-      border: 2px dashed #2d3148;
-      border-radius: 8px;
-      padding: 2.5rem 1.5rem;
+      border: 2px dashed #b0bdd6;
+      border-radius: 3px;
+      padding: 2rem 1.25rem;
       text-align: center;
       cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
+      transition: border-color 0.15s, background 0.15s;
       position: relative;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
+      background: #f9fafd;
     }
     .drop-zone:hover, .drop-zone.dragover {
-      border-color: #6366f1;
-      background: rgba(99,102,241,0.05);
+      border-color: #1565c0;
+      background: #eff5ff;
     }
     .drop-zone input[type=file] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+      position: absolute; inset: 0; opacity: 0;
+      cursor: pointer; width: 100%; height: 100%;
     }
-    .drop-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-    .drop-text { color: #94a3b8; font-size: 0.9rem; }
-    .drop-text strong { color: #6366f1; }
-    .file-name { margin-top: 0.5rem; font-size: 0.85rem; color: #6366f1; font-weight: 500; }
-
-    button {
-      width: 100%;
-      padding: 0.75rem;
-      background: #6366f1;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, opacity 0.2s;
+    .drop-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .drop-text { font-size: 0.82rem; color: #6b7a99; line-height: 1.5; }
+    .drop-text strong { color: #1565c0; }
+    .file-selected {
+      margin-top: 0.5rem; font-size: 0.8rem; color: #1a5c2e;
+      font-weight: 600; display: none;
     }
-    button:hover  { background: #4f46e5; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    .btn-upload {
+      width: 100%; padding: 0.65rem 1rem;
+      background: #1a2d5a; color: #fff;
+      border: none; border-radius: 3px;
+      font-size: 0.875rem; font-weight: 600;
+      letter-spacing: 0.02em; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-upload:hover    { background: #1565c0; }
+    .btn-upload:disabled { background: #9aaabf; cursor: not-allowed; }
+
+    /* ── Result ── */
     .result {
-      margin-top: 1.5rem;
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      font-size: 0.9rem;
-      display: none;
+      margin-top: 1rem; border-radius: 3px;
+      padding: 0.85rem 1rem; font-size: 0.82rem; display: none;
     }
-    .result.success { background: rgba(16,185,129,0.1); border: 1px solid #10b981; color: #6ee7b7; }
-    .result.error   { background: rgba(239,68,68,0.1);  border: 1px solid #ef4444; color: #fca5a5; }
+    .result.success {
+      background: #f0faf4; border: 1px solid #4caf82; color: #1a5c2e;
+    }
+    .result.error {
+      background: #fff5f5; border: 1px solid #e07575; color: #7a1c1c;
+    }
+    .result-title { font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem; }
 
-    .result-title { font-weight: 700; margin-bottom: 0.5rem; }
     .preview-table {
       width: 100%; border-collapse: collapse; margin-top: 0.75rem;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
-    .preview-table th { text-align: left; padding: 0.3rem 0.5rem; color: #94a3b8; border-bottom: 1px solid #2d3148; }
-    .preview-table td { padding: 0.3rem 0.5rem; border-bottom: 1px solid #1e2235; }
+    .preview-table thead tr { background: #e8f0e8; }
+    .preview-table th {
+      text-align: left; padding: 0.4rem 0.6rem;
+      font-weight: 700; color: #1a5c2e; font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 2px solid #4caf82;
+    }
+    .preview-table td {
+      padding: 0.4rem 0.6rem; border-bottom: 1px solid #d4ead8; color: #1a2540;
+    }
+    .preview-table tbody tr:last-child td { border-bottom: none; }
 
+    /* ── Spinner ── */
     .spinner {
-      display: inline-block; width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: white;
+      display: inline-block; width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
       border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin-right: 0.5rem; vertical-align: middle;
+      animation: spin 0.65s linear infinite;
+      margin-right: 0.4rem; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 1rem;
+      font-size: 0.72rem; color: #8896b3;
+      border-top: 1px solid #d0d8e8;
+      background: #f5f7fb;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
-<div class="card">
-  <div class="logo">🤖</div>
-  <h1>Campus Junior Training — Contribution Bot Admin</h1>
 
-  <div class="stats" id="stats">
+<header>
+  <div class="header-left">
     <div>
-      <div class="stat-label">Contributors</div>
-      <div class="stat-value" id="stat-count">—</div>
-    </div>
-    <div>
-      <div class="stat-label">Total Bonus Pool</div>
-      <div class="stat-value" id="stat-bonus">—</div>
-    </div>
-    <div style="grid-column:1/-1">
-      <div class="stat-label">Last Updated</div>
-      <div class="stat-sub" id="stat-updated">Loading…</div>
+      <div class="header-title">Campus Junior Training — Contribution Bot</div>
+      <div class="header-sub">EPAM Systems / Internal Administration</div>
     </div>
   </div>
+  <div class="header-badge">Admin Portal</div>
+</header>
 
-  <form id="uploadForm">
-    <div class="drop-zone" id="dropZone">
-      <input type="file" id="fileInput" name="file" accept=".xlsx">
-      <div class="drop-icon">📂</div>
-      <div class="drop-text">
-        <strong>Click to browse</strong> or drag &amp; drop<br>
-        Learn export (.xlsx)
+<main>
+  <div class="layout">
+
+    <!-- Left: Current Data -->
+    <div>
+      <div class="panel">
+        <div class="panel-header"><h2>Current Dataset</h2></div>
+        <div class="panel-body">
+          <div class="stat-row">
+            <div class="stat-box">
+              <div class="stat-label">Contributors</div>
+              <div class="stat-value" id="stat-count">—</div>
+              <div class="stat-meta">Eligible records</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Total Bonus Pool</div>
+              <div class="stat-value" id="stat-bonus">—</div>
+              <div class="stat-meta">At $15 / point</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <span>Data Source</span>
+            <span>Learn Export (.xlsx)</span>
+          </div>
+          <div class="info-row">
+            <span>Eligible Format</span>
+            <span>Group Meeting with Contributor</span>
+          </div>
+          <div class="info-row">
+            <span>Eligible Statuses</span>
+            <span>Submitted, Approved</span>
+          </div>
+          <div class="info-row">
+            <span>Last Refreshed</span>
+            <span id="stat-updated">Loading...</span>
+          </div>
+        </div>
       </div>
-      <div class="file-name" id="fileName"></div>
     </div>
-    <button type="submit" id="uploadBtn" disabled>Upload &amp; Regenerate Data</button>
-  </form>
 
-  <div class="result" id="result"></div>
-</div>
+    <!-- Right: Upload -->
+    <div>
+      <div class="panel">
+        <div class="panel-header"><h2>Upload New Export</h2></div>
+        <div class="panel-body">
+          <label class="field-label">Learn Export File</label>
+          <p class="field-note">
+            Download the latest export from learn.epam.com and upload it here.
+            The contribution data will be recalculated and applied immediately.
+          </p>
+
+          <form id="uploadForm">
+            <div class="drop-zone" id="dropZone">
+              <input type="file" id="fileInput" name="file" accept=".xlsx">
+              <div class="drop-icon">&#128196;</div>
+              <div class="drop-text">
+                <strong>Click to select</strong> or drag and drop<br>
+                Microsoft Excel Workbook (.xlsx)
+              </div>
+              <div class="file-selected" id="fileName"></div>
+            </div>
+            <button type="submit" class="btn-upload" id="uploadBtn" disabled>
+              Upload and Regenerate Data
+            </button>
+          </form>
+
+          <div class="result" id="result"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  EPAM Systems &mdash; Campus Junior Training &mdash; Internal Use Only
+</footer>
 
 <script>
-  // Load stats
   async function loadStats() {
     try {
       const r = await fetch('/api/stats');
       const d = await r.json();
       document.getElementById('stat-count').textContent = d.people_count ?? '0';
       document.getElementById('stat-bonus').textContent = d.total_bonus_usd != null
-        ? '$' + d.total_bonus_usd.toLocaleString('en-US', {minimumFractionDigits: 2})
+        ? '$' + Number(d.total_bonus_usd).toLocaleString('en-US', {minimumFractionDigits: 2})
         : '$0.00';
       document.getElementById('stat-updated').textContent = d.last_modified
-        ? new Date(d.last_modified).toLocaleString()
-        : 'Never';
+        ? new Date(d.last_modified).toLocaleString('en-US', {dateStyle:'medium', timeStyle:'short'})
+        : 'Not available';
     } catch(e) {
-      document.getElementById('stat-updated').textContent = 'Could not load stats';
+      document.getElementById('stat-updated').textContent = 'Could not load';
     }
   }
   loadStats();
 
-  // File input
-  const input = document.getElementById('fileInput');
-  const btn   = document.getElementById('uploadBtn');
+  const input  = document.getElementById('fileInput');
+  const btn    = document.getElementById('uploadBtn');
   const nameEl = document.getElementById('fileName');
-  const zone  = document.getElementById('dropZone');
+  const zone   = document.getElementById('dropZone');
 
-  input.addEventListener('change', () => {
-    if (input.files[0]) {
-      nameEl.textContent = input.files[0].name;
-      btn.disabled = false;
-    }
-  });
+  function setFile(file) {
+    nameEl.textContent = 'Selected: ' + file.name;
+    nameEl.style.display = 'block';
+    btn.disabled = false;
+  }
+
+  input.addEventListener('change', () => { if (input.files[0]) setFile(input.files[0]); });
+
   zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
   zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
   zone.addEventListener('drop', e => {
@@ -251,18 +386,16 @@ ADMIN_HTML = """<!DOCTYPE html>
     if (file && file.name.endsWith('.xlsx')) {
       const dt = new DataTransfer(); dt.items.add(file);
       input.files = dt.files;
-      nameEl.textContent = file.name;
-      btn.disabled = false;
+      setFile(file);
     }
   });
 
-  // Upload
   document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const resultEl = document.getElementById('result');
     resultEl.style.display = 'none';
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Processing…';
+    btn.innerHTML = '<span class="spinner"></span>Processing...';
 
     const fd = new FormData();
     fd.append('file', input.files[0]);
@@ -270,15 +403,15 @@ ADMIN_HTML = """<!DOCTYPE html>
     try {
       const r = await fetch('/upload', { method: 'POST', body: fd });
       const d = await r.json();
-
       resultEl.style.display = 'block';
+
       if (d.success) {
         resultEl.className = 'result success';
-        let html = `<div class="result-title">✅ Updated — ${d.people_count} contributor(s) found</div>`;
+        let html = `<div class="result-title">Data updated successfully &mdash; ${d.people_count} contributor(s) found</div>`;
         if (d.people && d.people.length) {
           html += '<table class="preview-table"><thead><tr><th>Name</th><th>Points</th><th>Bonus</th><th>Sessions</th></tr></thead><tbody>';
           d.people.forEach(p => {
-            html += `<tr><td>${p.name}</td><td>${p.eligible_points}</td><td>$${p.bonus_usd}</td><td>${p.row_count}</td></tr>`;
+            html += `<tr><td>${p.name}</td><td>${p.eligible_points}</td><td>$${Number(p.bonus_usd).toFixed(2)}</td><td>${p.row_count}</td></tr>`;
           });
           html += '</tbody></table>';
         }
@@ -286,15 +419,15 @@ ADMIN_HTML = """<!DOCTYPE html>
         loadStats();
       } else {
         resultEl.className = 'result error';
-        resultEl.innerHTML = `<div class="result-title">❌ Upload failed</div>${d.error ?? 'Unknown error'}`;
+        resultEl.innerHTML = `<div class="result-title">Upload Failed</div>${d.error ?? 'An unknown error occurred.'}`;
       }
     } catch(err) {
       resultEl.style.display = 'block';
       resultEl.className = 'result error';
-      resultEl.innerHTML = `<div class="result-title">❌ Network error</div>${err.message}`;
+      resultEl.innerHTML = `<div class="result-title">Network Error</div>${err.message}`;
     }
 
-    btn.innerHTML = 'Upload &amp; Regenerate Data';
+    btn.innerHTML = 'Upload and Regenerate Data';
     btn.disabled = false;
   });
 </script>
