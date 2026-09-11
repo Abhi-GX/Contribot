@@ -169,7 +169,7 @@ Teams, NOT in Bot Framework Emulator (emulator has no Teams identity context).
 
 ---
 
-## Current status by phase
+## Current status by phase  
 
 ### Phase 1 — Teams pipeline ✅ COMPLETE (POC)
 - Bot deployed on Vercel
