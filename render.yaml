@@ -13,6 +13,8 @@ services:
         sync: false
       - key: GOOGLE_API_KEY
         sync: false
+      - key: GOOGLE_API_KEYS
+        sync: false
       - key: KV_REST_API_URL
         sync: false
       - key: KV_REST_API_TOKEN

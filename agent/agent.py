@@ -4,10 +4,10 @@ agent/agent.py
 Contribution Bot — Gemini-powered conversational agent.
 
 Architecture: direct Gemini API calls with tool use.
-- Uses google-genai client directly (no ADK overhead)
+- Uses GeminiKeyPool for automatic key rotation on 429 (no sleep, immediate failover)
 - Conversation history passed explicitly as Content list each turn
-- prefetched_context: contribution data pre-fetched in messages.py and injected
-  into the system prompt so Gemini can answer in ONE round trip for most queries
+- prefetched_context: contribution data pre-fetched in app.py and injected
+  into the system prompt so Gemini answers in ONE round trip for most queries
 
 Entry points:
     run_agent_async(user_message, user_email, history, prefetched_context)
@@ -19,26 +19,15 @@ from __future__ import annotations
 import asyncio
 import json
 import os
-import re
 from typing import List, Dict, Tuple, Optional
 
 import google.genai as genai
 from google.genai import types
 
-from .tools import get_contribution, get_all_contributors, get_top_contributors, get_program_info
+from .tools import get_contribution, get_all_contributors, get_top_contributors
+from .key_pool import get_pool, AllKeysExhausted
 
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
-_client: genai.Client | None = None
-
-
-def _get_client() -> genai.Client:
-    global _client
-    if _client is None:
-        api_key = os.environ.get("GOOGLE_API_KEY", "")
-        if not api_key:
-            raise RuntimeError("GOOGLE_API_KEY environment variable not set.")
-        _client = genai.Client(api_key=api_key)
-    return _client
 
 
 # ---------------------------------------------------------------------------
@@ -48,7 +37,6 @@ _TOOLS = {
     "get_contribution":     get_contribution,
     "get_all_contributors": get_all_contributors,
     "get_top_contributors": get_top_contributors,
-    "get_program_info":     get_program_info,
 }
 
 _TOOL_CONFIG = types.Tool(function_declarations=[
@@ -94,14 +82,6 @@ _TOOL_CONFIG = types.Tool(function_declarations=[
             }
         )
     ),
-    types.FunctionDeclaration(
-        name="get_program_info",
-        description=(
-            "Returns program rules: eligible formats, statuses, bonus rate, CSV schema. "
-            "Call for general program questions, NOT personal data."
-        ),
-        parameters=types.Schema(type=types.Type.OBJECT, properties={})
-    ),
 ])
 
 # ---------------------------------------------------------------------------
@@ -111,19 +91,36 @@ _BASE_SYSTEM_PROMPT = """You are the Campus Junior Training Contribution Bot for
 You help Mentors, SMEs, Scrum Masters, and Product Owners check their eligible
 contribution points and bonus amount.
 
-Rules:
+== PROGRAM RULES (answer these questions directly — no tool call needed) ==
+Program:          EPAM Campus Junior Training
+Eligible roles:   Mentor, SME, Scrum Master, Product Owner
+Eligible format:  "Group Meeting with contributor" sessions ONLY
+Eligible statuses: Submitted, Approved
+  (Not Eligible, Rejected, Draft, Individual do NOT count)
+Point value:      $15 per eligible point
+Bonus formula:    bonus_usd = eligible_points × $15
+Points source:    Verified Points if available, otherwise Submitted Points
+Data freshness:   Refreshed from Learn export on each admin upload. Recent sessions may lag.
+
+== DATA SCHEMA (per person in the dataset) ==
+  email              — EPAM email address (unique key)
+  name               — Full name
+  eligible_points    — Total points from eligible sessions
+  bonus_usd          — eligible_points × $15
+  row_count          — Number of eligible sessions counted
+  included_statuses  — Breakdown e.g. "6 approved / 9 submitted"
+
+== TOOLS (call only when needed) ==
+- get_contribution(email): personal data for ONE person (use pre-fetched data first)
+- get_all_contributors():  full list — use for aggregate stats, "list everyone"
+- get_top_contributors(n): top N by points — use for leaderboard queries
+
+== RESPONSE RULES ==
 - Be friendly, concise, and professional
 - Address the user by name when known
-- For personal data: use get_contribution(email) — the email is in session context
-- For all contributors: use get_all_contributors()
-- For leaderboard/rankings: use get_top_contributors(n)
-- For program rules: use get_program_info()
-- NEVER ask the user for their email — it is already provided in session context
+- NEVER ask the user for their email — it is already in session context
 - Remember context from earlier in this conversation for follow-up questions
 - Keep replies short and focused
-
-CSV data schema (what's available per person):
-  email, name, eligible_points, bonus_usd, row_count, included_statuses
 
 Format for personal contribution results:
   Hi [Name]! Here's your Campus Junior Training summary:
@@ -145,6 +142,39 @@ def _build_system_prompt(prefetched_context: Optional[dict]) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Pool-aware generate call
+# ---------------------------------------------------------------------------
+async def _call_with_pool(pool, model: str, contents, config) -> types.GenerateContentResponse:
+    """
+    Call generate_content with automatic key rotation on 429 and retry on 503.
+    - 429: immediately rotates to the next key (no sleep)
+    - 503: retries up to 3 times with exponential backoff on the same key
+    """
+    client, key_idx = pool.get_active_client()
+
+    for _rotation in range(len(pool._keys) + 1):
+        for attempt in range(3):
+            try:
+                return await client.aio.models.generate_content(
+                    model=model,
+                    contents=contents,
+                    config=config,
+                )
+            except Exception as e:
+                err = str(e)
+                if "429" in err or "RESOURCE_EXHAUSTED" in err:
+                    # Rotate to next key immediately — no sleep
+                    client, key_idx = pool.report_429(key_idx, err)
+                    break   # break attempt loop; outer loop retries with new key
+                if ("503" in err or "UNAVAILABLE" in err) and attempt < 2:
+                    await asyncio.sleep(2 ** attempt)
+                    continue
+                raise
+
+    raise AllKeysExhausted("Exhausted all key rotations without a successful response.")
+
+
+# ---------------------------------------------------------------------------
 # Core async function
 # ---------------------------------------------------------------------------
 async def run_agent_async(
@@ -160,13 +190,31 @@ async def run_agent_async(
         user_message:       text from the user
         user_email:         verified Teams email
         history:            previous turns [{role, text}, ...]
-        prefetched_context: get_contribution result already fetched in messages.py
+        prefetched_context: get_contribution result already fetched in app.py
     """
     if history is None:
         history = []
 
-    client = _get_client()
+    try:
+        pool = get_pool()
+    except AllKeysExhausted as e:
+        msg = (
+            "I'm temporarily unavailable — the AI quota is exhausted for all configured keys. "
+            "Please try again after midnight Pacific Time."
+        )
+        print(f"[agent] AllKeysExhausted at startup: {e}", flush=True)
+        return msg, history
+
     system_prompt = _build_system_prompt(prefetched_context)
+    config = types.GenerateContentConfig(
+        system_instruction=system_prompt,
+        tools=[_TOOL_CONFIG],
+        temperature=0.2,
+    )
+
+    # Cap history to last 8 messages (4 turns) to keep token count low
+    if len(history) > 8:
+        history = history[-8:]
 
     # Build Gemini contents list from history
     contents: List[types.Content] = []
@@ -194,61 +242,43 @@ async def run_agent_async(
     final_reply = ""
     max_iterations = 5
 
-    for _ in range(max_iterations):
-        for attempt in range(3):
-            try:
-                response = await client.aio.models.generate_content(
-                    model=MODEL,
-                    contents=contents,
-                    config=types.GenerateContentConfig(
-                        system_instruction=system_prompt,
-                        tools=[_TOOL_CONFIG],
-                        temperature=0.2,
-                    )
+    try:
+        for _ in range(max_iterations):
+            response = await _call_with_pool(pool, MODEL, contents, config)
+
+            candidate = response.candidates[0]
+            parts = candidate.content.parts
+
+            tool_calls = [p for p in parts if p.function_call is not None]
+
+            if not tool_calls:
+                final_reply = "".join(
+                    p.text for p in parts if hasattr(p, "text") and p.text
                 )
                 break
-            except Exception as e:
-                err_str = str(e)
-                if "503" in err_str or "UNAVAILABLE" in err_str:
-                    if attempt < 2:
-                        await asyncio.sleep(2 ** attempt)
-                        continue
-                elif "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                    delay_match = re.search(r"retry in (\d+)", err_str, re.IGNORECASE)
-                    delay = int(delay_match.group(1)) if delay_match else 3
-                    if attempt < 2:
-                        await asyncio.sleep(delay)
-                        continue
-                raise
 
-        candidate = response.candidates[0]
-        parts = candidate.content.parts
+            contents.append(types.Content(role="model", parts=parts))
 
-        tool_calls = [p for p in parts if p.function_call is not None]
+            tool_results = []
+            for part in tool_calls:
+                fn_name = part.function_call.name
+                fn_args = dict(part.function_call.args) if part.function_call.args else {}
+                result  = _TOOLS[fn_name](**fn_args) if fn_name in _TOOLS else {"error": f"Unknown tool: {fn_name}"}
+                tool_results.append(types.Part(
+                    function_response=types.FunctionResponse(
+                        name=fn_name,
+                        response={"result": result}
+                    )
+                ))
 
-        if not tool_calls:
-            final_reply = "".join(
-                p.text for p in parts if hasattr(p, "text") and p.text
-            )
-            break
+            contents.append(types.Content(role="user", parts=tool_results))
 
-        contents.append(types.Content(role="model", parts=parts))
-
-        tool_results = []
-        for part in tool_calls:
-            fn_name = part.function_call.name
-            fn_args = dict(part.function_call.args) if part.function_call.args else {}
-
-            result = _TOOLS[fn_name](**fn_args) if fn_name in _TOOLS else {"error": f"Unknown tool: {fn_name}"}
-
-            tool_results.append(types.Part(
-                function_response=types.FunctionResponse(
-                    name=fn_name,
-                    response={"result": result}
-                )
-            ))
-
-        contents.append(types.Content(role="user", parts=tool_results))
+    except AllKeysExhausted as e:
+        print(f"[agent] AllKeysExhausted: {e}", flush=True)
+        final_reply = (
+            "I'm temporarily unavailable — the AI quota is exhausted for all configured keys. "
+            "Please try again after midnight Pacific Time."
+        )
 
     if not final_reply:
         final_reply = "I'm sorry, I couldn't generate a response. Please try again."
