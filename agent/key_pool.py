@@ -207,9 +207,10 @@ class GeminiKeyPool:
         result = []
         for i, k in enumerate(self._keys):
             entry: dict = {
-                "key_index": i + 1,
-                "state":     k.state.value,
-                "fail_count": k.fail_count,
+                "key_index":   i + 1,
+                "key_preview": (k.key[:6] + "..." + k.key[-4:]) if len(k.key) > 10 else "***",
+                "state":       k.state.value,
+                "fail_count":  k.fail_count,
             }
             if k.state != KeyState.ACTIVE:
                 entry["available_in_seconds"] = max(0.0, round(k.cooldown_until - now, 1))
@@ -218,7 +219,7 @@ class GeminiKeyPool:
 
     async def validate_all_keys(self) -> List[dict]:
         """
-        Probe each key against the Gemini API with a minimal request.
+        Probe each key against the Gemini API with a minimal async request.
 
         validation_status values:
           valid        — API accepted the request
@@ -227,18 +228,19 @@ class GeminiKeyPool:
           invalid      — 401/403 or key rejected by API
           server_error — 5xx API error
         """
+        from google.genai import types as genai_types
         results = []
         for i, k in enumerate(self._keys):
             preview = (k.key[:6] + "..." + k.key[-4:]) if len(k.key) > 10 else "***"
             vstatus = "unknown"
             detail  = ""
             try:
+                # Use aio (async) client — same path as agent.py
                 test_client = genai.Client(api_key=k.key)
-                await asyncio.to_thread(
-                    test_client.models.generate_content,
+                await test_client.aio.models.generate_content(
                     model="gemini-2.0-flash",
                     contents="hi",
-                    config={"max_output_tokens": 5},
+                    config=genai_types.GenerateContentConfig(max_output_tokens=5),
                 )
                 vstatus = "valid"
             except genai_errors.ClientError as e:
@@ -255,10 +257,10 @@ class GeminiKeyPool:
                     detail  = "Key rejected by API"
                 else:
                     vstatus = "invalid"
-                    detail  = err[:120]
+                    detail  = err[:160]
             except genai_errors.ServerError as e:
                 vstatus = "server_error"
-                detail  = str(e)[:120]
+                detail  = str(e)[:160]
             except Exception as e:
                 err = str(e)
                 if "429" in err or "RESOURCE_EXHAUSTED" in err:
@@ -269,11 +271,12 @@ class GeminiKeyPool:
                     detail  = "Key rejected"
                 elif any(x in err for x in ("500", "502", "503", "UNAVAILABLE")):
                     vstatus = "server_error"
-                    detail  = err[:120]
+                    detail  = err[:160]
                 else:
-                    vstatus = "invalid"
-                    detail  = err[:120]
+                    vstatus = "error"
+                    detail  = err[:160]
 
+            print(f"[key_pool] validate key {i+1}: {vstatus} — {detail}", flush=True)
             results.append({
                 "key_index":          i + 1,
                 "key_preview":        preview,
@@ -283,6 +286,33 @@ class GeminiKeyPool:
                 "detail":             detail,
             })
         return results
+
+    # ── Runtime CRUD ──────────────────────────────────────────────────────────
+
+    def add_key(self, key: str) -> int:
+        """Add a new key. Returns the new 1-based index."""
+        self._keys.append(ManagedKey(key=key))
+        return len(self._keys)
+
+    def replace_key(self, idx: int, new_key: str) -> None:
+        """Replace key at 1-based idx, preserving pool slot count."""
+        if not 1 <= idx <= len(self._keys):
+            raise IndexError(f"Key index {idx} out of range (1–{len(self._keys)})")
+        self._keys[idx - 1] = ManagedKey(key=new_key)
+
+    def remove_key(self, idx: int) -> None:
+        """Remove key at 1-based idx. Pool must keep at least one key."""
+        if len(self._keys) <= 1:
+            raise ValueError("Cannot remove the last API key.")
+        if not 1 <= idx <= len(self._keys):
+            raise IndexError(f"Key index {idx} out of range (1–{len(self._keys)})")
+        del self._keys[idx - 1]
+        if self._current >= len(self._keys):
+            self._current = 0
+
+    def get_raw_keys(self) -> List[str]:
+        """Return plain key strings (for persistence to Redis)."""
+        return [k.key for k in self._keys]
 
 
 # ---------------------------------------------------------------------------
@@ -296,3 +326,9 @@ def get_pool() -> GeminiKeyPool:
     if _pool is None:
         _pool = GeminiKeyPool.from_env()
     return _pool
+
+
+def set_pool(pool: GeminiKeyPool) -> None:
+    """Replace the singleton pool (e.g. after loading keys from Redis)."""
+    global _pool
+    _pool = pool

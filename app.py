@@ -76,6 +76,7 @@ from session_store import (
     get_admins, add_admin, remove_admin, is_admin,
     save_data_to_redis, load_data_from_redis,
     save_excel_to_redis, load_excel_from_redis,
+    save_api_keys_to_redis, load_api_keys_from_redis,
 )
 
 # ---------------------------------------------------------------------------
@@ -366,6 +367,23 @@ ADMIN_HTML = r"""<!DOCTYPE html>
     .badge-server-error { background: #f0f0ff; color: #3a2080; border: 1px solid #a5a5e8; }
     .badge-validating   { background: #f5f7fb; color: #3a4d78; border: 1px solid #d0d8e8; }
     .pool-refresh       { font-size: 0.7rem; color: #8896b3; margin-top: 0.5rem; text-align: right; }
+    .key-preview        { font-family: monospace; font-size: 0.78rem; color: #4a5568; letter-spacing: 0.02em; }
+    .btn-table          {
+      border: none; cursor: pointer; border-radius: 4px;
+      font-size: 0.7rem; font-weight: 600; padding: 2px 8px;
+      letter-spacing: 0.03em; transition: opacity 0.15s;
+    }
+    .btn-table:hover    { opacity: 0.8; }
+    .btn-replace        { background: #e8f0fe; color: #1a56db; }
+    .btn-remove         { background: #fef0f0; color: #8b2020; }
+    .key-add-row        { display: flex; gap: 0.5rem; margin-top: 0.75rem; align-items: center; }
+    .key-add-input      {
+      flex: 1; padding: 0.4rem 0.65rem; border: 1px solid #c8d0e0;
+      border-radius: 6px; font-size: 0.8rem; font-family: monospace;
+      background: #f9fafc; color: #1a2340;
+    }
+    .key-add-input:focus { outline: none; border-color: #4a6fa5; box-shadow: 0 0 0 2px rgba(74,111,165,0.15); }
+    .key-action-msg     { font-size: 0.75rem; margin-top: 0.4rem; min-height: 1rem; }
 
     /* ── Spinner ── */
     .spinner {
@@ -504,7 +522,7 @@ ADMIN_HTML = r"""<!DOCTYPE html>
   <!-- API Key pool -->
   <div class="panel full-width">
     <div class="panel-header" style="justify-content:space-between;align-items:center;">
-      <div style="display:flex;align-items:center;gap:0.5rem;"><span>🔑</span><h2>API Key Pool Status</h2></div>
+      <div style="display:flex;align-items:center;gap:0.5rem;"><span>🔑</span><h2>API Key Pool</h2></div>
       <button class="btn-primary" id="validateBtn"
               style="font-size:0.78rem;padding:0.3rem 0.9rem;margin:0;"
               onclick="validateKeys()">Validate All Keys</button>
@@ -513,18 +531,31 @@ ADMIN_HTML = r"""<!DOCTYPE html>
       <table class="key-table">
         <thead>
           <tr>
-            <th>Key Slot</th>
+            <th>Slot</th>
+            <th>Key Preview</th>
             <th>State</th>
             <th>Failures</th>
-            <th>Available In</th>
             <th>Live Check</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="keyPoolBody">
-          <tr><td colspan="5" style="color:#8896b3;font-size:0.8rem;">Loading...</td></tr>
+          <tr><td colspan="6" style="color:#8896b3;font-size:0.8rem;">Loading...</td></tr>
         </tbody>
       </table>
       <p class="pool-refresh" id="poolRefreshTime"></p>
+
+      <!-- Add new key -->
+      <div style="border-top:1px solid #edf0f7;margin-top:0.75rem;padding-top:0.75rem;">
+        <div style="font-size:0.75rem;font-weight:700;color:#3a4d78;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em;">Add New Key</div>
+        <div class="key-add-row">
+          <input type="password" id="newKeyInput" class="key-add-input"
+                 placeholder="Paste new Gemini API key here" autocomplete="off">
+          <button class="btn-primary" style="font-size:0.78rem;padding:0.4rem 0.9rem;white-space:nowrap;"
+                  onclick="addKey()">Add Key</button>
+        </div>
+        <div class="key-action-msg" id="keyActionMsg"></div>
+      </div>
     </div>
   </div>
 
@@ -666,9 +697,14 @@ ADMIN_HTML = r"""<!DOCTYPE html>
   }
 
   // ── Key pool ──────────────────────────────────────────────────────────────
-  // Stores the last validation results by key_index so loadKeyPool() can
-  // preserve them across the 30s auto-refresh.
+  // Stores last validation results by key_index; preserved across auto-refresh.
   let _lastValidation = {};
+
+  function _keyActionMsg(msg, ok) {
+    const el = document.getElementById('keyActionMsg');
+    el.textContent = msg;
+    el.style.color = ok ? '#1a6b3a' : '#8b2020';
+  }
 
   async function loadKeyPool() {
     try {
@@ -676,30 +712,34 @@ ADMIN_HTML = r"""<!DOCTYPE html>
       const d = await r.json();
       const tbody = document.getElementById('keyPoolBody');
       if (!d.keys || !d.keys.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="color:#8896b3">No key pool configured</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="color:#8896b3">No key pool configured</td></tr>';
         return;
       }
       tbody.innerHTML = d.keys.map(k => {
         const cls   = k.state === 'active' ? 'badge-active'
                     : k.state === 'cooling' ? 'badge-cooling' : 'badge-exhausted';
-        const avail = k.available_in_seconds != null ? fmtDur(k.available_in_seconds) : '—';
         const vr    = _lastValidation[k.key_index];
         const liveCell = vr
-          ? `<span class="badge badge-${vr.vstatus.replace('_','-')}" title="${vr.detail || ''}">${vr.vstatus.replace('_',' ')}</span>`
+          ? `<span class="badge badge-${vr.vstatus.replace(/_/g,'-')}">${vr.vstatus.replace(/_/g,' ')}</span>`
+            + (vr.detail ? `<br><small style="color:#8896b3;font-size:0.68rem;">${vr.detail}</small>` : '')
           : '<span style="color:#8896b3;font-size:0.75rem;">—</span>';
         return `<tr>
-          <td><strong>Key ${k.key_index}</strong></td>
+          <td><strong>${k.key_index}</strong></td>
+          <td class="key-preview">${k.key_preview || '—'}</td>
           <td><span class="badge ${cls}">${k.state}</span></td>
           <td>${k.fail_count}</td>
-          <td>${avail}</td>
           <td>${liveCell}</td>
+          <td>
+            <button class="btn-table btn-replace" onclick="replaceKey(${k.key_index})">Replace</button>
+            <button class="btn-table btn-remove" style="margin-left:4px" onclick="removeKey(${k.key_index})">Remove</button>
+          </td>
         </tr>`;
       }).join('');
       document.getElementById('poolRefreshTime').textContent =
         'Last refreshed: ' + new Date().toLocaleTimeString('en-US');
     } catch(e) {
       document.getElementById('keyPoolBody').innerHTML =
-        '<tr><td colspan="5" style="color:#8896b3">Could not load pool status</td></tr>';
+        '<tr><td colspan="6" style="color:#8896b3">Could not load pool status</td></tr>';
     }
   }
 
@@ -708,35 +748,74 @@ ADMIN_HTML = r"""<!DOCTYPE html>
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Validating...';
     _lastValidation = {};
-    // Show "checking..." for every row while waiting
     document.querySelectorAll('#keyPoolBody tr').forEach(tr => {
       const cells = tr.querySelectorAll('td');
       if (cells.length >= 5)
         cells[4].innerHTML = '<span class="badge badge-validating">checking</span>';
     });
     try {
-      const r = await fetch('/api/keys/validate', {
-        method: 'POST', headers: authHeaders()
-      });
+      const r = await fetch('/api/keys/validate', { method: 'POST', headers: authHeaders() });
       const d = await r.json();
       if (!d.keys) throw new Error(d.error || 'Validation failed');
       d.keys.forEach(k => {
-        _lastValidation[k.key_index] = {
-          vstatus: k.validation_status,
-          detail:  k.detail || '',
-          preview: k.key_preview || '',
-        };
+        _lastValidation[k.key_index] = { vstatus: k.validation_status, detail: k.detail || '' };
       });
       await loadKeyPool();
       document.getElementById('poolRefreshTime').textContent =
         'Validated at ' + new Date().toLocaleTimeString('en-US');
     } catch(e) {
-      document.getElementById('poolRefreshTime').textContent =
-        'Validation error: ' + e.message;
+      document.getElementById('poolRefreshTime').textContent = 'Validation error: ' + e.message;
     } finally {
       btn.disabled = false;
       btn.innerHTML = 'Validate All Keys';
     }
+  }
+
+  async function addKey() {
+    const input = document.getElementById('newKeyInput');
+    const key = input.value.trim();
+    if (!key) { _keyActionMsg('Paste a key first.', false); return; }
+    try {
+      const r = await fetch('/api/keys', {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      const d = await r.json();
+      if (!d.success) throw new Error(d.error || 'Failed');
+      input.value = '';
+      _keyActionMsg(`Key added as slot ${d.key_index} (${d.total} total).`, true);
+      await loadKeyPool();
+    } catch(e) { _keyActionMsg('Error: ' + e.message, false); }
+  }
+
+  async function replaceKey(idx) {
+    const newKey = window.prompt(`Replace Key ${idx} with a new key:\n(leave blank to cancel)`);
+    if (!newKey || !newKey.trim()) return;
+    try {
+      const r = await fetch(`/api/keys/${idx}`, {
+        method: 'PUT',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: newKey.trim() })
+      });
+      const d = await r.json();
+      if (!d.success) throw new Error(d.error || 'Failed');
+      delete _lastValidation[idx];
+      _keyActionMsg(`Key ${idx} replaced.`, true);
+      await loadKeyPool();
+    } catch(e) { _keyActionMsg('Error: ' + e.message, false); }
+  }
+
+  async function removeKey(idx) {
+    if (!confirm(`Remove Key ${idx} from the pool?\nThis takes effect immediately.`)) return;
+    try {
+      const r = await fetch(`/api/keys/${idx}`, { method: 'DELETE', headers: authHeaders() });
+      const d = await r.json();
+      if (!d.success) throw new Error(d.error || 'Failed');
+      delete _lastValidation[idx];
+      _keyActionMsg(`Key ${idx} removed.`, true);
+      await loadKeyPool();
+    } catch(e) { _keyActionMsg('Error: ' + e.message, false); }
   }
 
   function fmtDur(sec) {
@@ -860,6 +939,19 @@ async def on_startup(app_instance):
                 print(f"[startup] Restored latest_export.xlsx from Redis ({len(excel_bytes):,} bytes)", flush=True)
     except Exception as e:
         print(f"[startup] Redis restore failed (non-fatal): {e}", flush=True)
+
+    # Load API keys from Redis (overrides env vars if admin saved keys there)
+    try:
+        from agent.key_pool import GeminiKeyPool, set_pool, get_pool
+        redis_keys = await load_api_keys_from_redis()
+        if redis_keys:
+            set_pool(GeminiKeyPool(redis_keys))
+            print(f"[startup] Loaded {len(redis_keys)} API key(s) from Redis.", flush=True)
+        else:
+            get_pool()  # initialize from env vars so errors surface at startup
+            print("[startup] API keys loaded from environment variables.", flush=True)
+    except Exception as e:
+        print(f"[startup] Key pool init failed: {e}", flush=True)
 
     # Seed default admin list
     try:
@@ -1112,6 +1204,59 @@ async def route_keys_validate(req: Request) -> Response:
         return json_response({"error": str(e)}, status=500)
 
 
+async def route_keys_add(req: Request) -> Response:
+    if not _check_admin_auth(req):
+        return json_response({"error": "Unauthorized"}, status=401)
+    from agent.key_pool import get_pool
+    try:
+        body = await req.json()
+        key = (body.get("key") or "").strip()
+        if not key:
+            return json_response({"error": "key is required"}, status=400)
+        pool = get_pool()
+        new_idx = pool.add_key(key)
+        await save_api_keys_to_redis(pool.get_raw_keys())
+        return json_response({"success": True, "key_index": new_idx, "total": len(pool._keys)})
+    except Exception as e:
+        return json_response({"error": str(e)}, status=500)
+
+
+async def route_keys_replace(req: Request) -> Response:
+    if not _check_admin_auth(req):
+        return json_response({"error": "Unauthorized"}, status=401)
+    from agent.key_pool import get_pool
+    try:
+        idx = int(req.match_info["index"])
+        body = await req.json()
+        key = (body.get("key") or "").strip()
+        if not key:
+            return json_response({"error": "key is required"}, status=400)
+        pool = get_pool()
+        pool.replace_key(idx, key)
+        await save_api_keys_to_redis(pool.get_raw_keys())
+        return json_response({"success": True, "key_index": idx})
+    except (IndexError, ValueError) as e:
+        return json_response({"error": str(e)}, status=400)
+    except Exception as e:
+        return json_response({"error": str(e)}, status=500)
+
+
+async def route_keys_remove(req: Request) -> Response:
+    if not _check_admin_auth(req):
+        return json_response({"error": "Unauthorized"}, status=401)
+    from agent.key_pool import get_pool
+    try:
+        idx = int(req.match_info["index"])
+        pool = get_pool()
+        pool.remove_key(idx)
+        await save_api_keys_to_redis(pool.get_raw_keys())
+        return json_response({"success": True})
+    except (IndexError, ValueError) as e:
+        return json_response({"error": str(e)}, status=400)
+    except Exception as e:
+        return json_response({"error": str(e)}, status=500)
+
+
 async def route_health(req: Request) -> Response:
     people_count = 0
     if CSV_OUT.exists():
@@ -1139,9 +1284,12 @@ app.router.add_get ("/api/admin/list",      route_admin_list)
 app.router.add_post("/api/admin/add",       route_admin_add)
 app.router.add_post("/api/admin/remove",    route_admin_remove)
 app.router.add_post("/api/messages",        route_messages)
-app.router.add_get ("/api/keys/status",     route_keys_status)
-app.router.add_post("/api/keys/validate",   route_keys_validate)
-app.router.add_get ("/api/health",          route_health)
+app.router.add_get ("/api/keys/status",         route_keys_status)
+app.router.add_post("/api/keys/validate",       route_keys_validate)
+app.router.add_post("/api/keys",                route_keys_add)
+app.router.add_put ("/api/keys/{index}",        route_keys_replace)
+app.router.add_delete("/api/keys/{index}",      route_keys_remove)
+app.router.add_get ("/api/health",              route_health)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

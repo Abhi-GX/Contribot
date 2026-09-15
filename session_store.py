@@ -37,6 +37,7 @@ _ADMINS_KEY          = "contribot:admins"
 _TOTALS_CSV_KEY      = "contribot:totals_csv"
 _SESSIONS_JSON_KEY   = "contribot:sessions_json"
 _LATEST_EXCEL_KEY    = "contribot:latest_excel"
+_API_KEYS_KEY        = "contribot:api_keys"
 
 _redis: Optional[Redis] = None
 _redis_unavailable: bool = False
@@ -240,6 +241,36 @@ async def save_excel_to_redis(excel_bytes: bytes) -> bool:
     except Exception as e:
         print(f"[session_store] save_excel_to_redis error: {e}", flush=True)
         return False
+
+
+async def save_api_keys_to_redis(keys: list) -> bool:
+    """Persist the current API key list to Redis."""
+    try:
+        redis = _get_redis()
+        await redis.set(_API_KEYS_KEY, json.dumps(keys))
+        print(f"[session_store] API keys saved to Redis ({len(keys)} keys).", flush=True)
+        return True
+    except RuntimeError:
+        return False
+    except Exception as e:
+        print(f"[session_store] save_api_keys_to_redis error: {e}", flush=True)
+        return False
+
+
+async def load_api_keys_from_redis() -> Optional[list]:
+    """Load saved API keys from Redis. Returns list of strings, or None if not stored."""
+    try:
+        redis = _get_redis()
+        raw = await redis.get(_API_KEYS_KEY)
+        if raw is None:
+            return None
+        keys = json.loads(raw)
+        return [k for k in keys if k and k.strip()]
+    except RuntimeError:
+        return None
+    except Exception as e:
+        print(f"[session_store] load_api_keys_from_redis error: {e}", flush=True)
+        return None
 
 
 async def load_excel_from_redis() -> Optional[bytes]:
