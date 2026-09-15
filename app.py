@@ -107,458 +107,586 @@ ADMIN_HTML = r"""<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EPAM — Contribution Admin Portal</title>
+  <title>Contribot — Admin Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-      background: #eef1f6;
-      color: #1a2540;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    :root {
+      --bg:        #f0f2f5;
+      --card:      #ffffff;
+      --border:    #e5e7eb;
+      --border-2:  #d1d5db;
+      --navy:      #0d1b2a;
+      --navy-2:    #152336;
+      --blue:      #2563eb;
+      --blue-lt:   #eff6ff;
+      --blue-mid:  #dbeafe;
+      --text:      #111827;
+      --text-2:    #374151;
+      --text-3:    #6b7280;
+      --text-4:    #9ca3af;
+      --green:     #059669;
+      --green-lt:  #ecfdf5;
+      --yellow:    #d97706;
+      --yellow-lt: #fffbeb;
+      --red:       #dc2626;
+      --red-lt:    #fef2f2;
+      --purple:    #7c3aed;
+      --purple-lt: #f5f3ff;
+      --radius:    10px;
+      --shadow:    0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    /* ── Header ── */
-    header {
-      background: #1a2d5a;
-      color: #fff;
-      padding: 0 2.5rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 3px solid #1565c0;
-      flex-shrink: 0;
-    }
-    .header-left { display: flex; align-items: center; gap: 0.9rem; }
-    .header-icon { font-size: 1.4rem; }
-    .header-title { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.01em; }
-    .header-sub   { font-size: 0.75rem; color: #90a8d4; margin-top: 2px; }
-    .header-badge {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; background: #1565c0;
-      color: #cfe2ff; padding: 4px 12px; border-radius: 3px;
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     /* ── Login overlay ── */
     #loginOverlay {
-      position: fixed; inset: 0; z-index: 1000;
-      background: rgba(15, 25, 55, 0.88);
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(13,27,42,0.9);
+      backdrop-filter: blur(6px);
       display: flex; align-items: center; justify-content: center;
     }
     .login-card {
-      background: #fff; border-radius: 6px; padding: 2.5rem 2rem;
-      width: 100%; max-width: 380px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+      background: #fff; border-radius: 16px; padding: 2.75rem 2.25rem;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
       text-align: center;
     }
-    .login-icon  { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .login-title { font-size: 1.1rem; font-weight: 700; color: #1a2d5a; margin-bottom: 0.4rem; }
-    .login-sub   { font-size: 0.82rem; color: #6b7a99; margin-bottom: 1.5rem; }
+    .login-logo {
+      width: 56px; height: 56px; border-radius: 14px;
+      background: linear-gradient(135deg, #0d1b2a 0%, #2563eb 100%);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin-bottom: 1.25rem;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+    }
+    .login-title { font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .login-sub   { font-size: 0.82rem; color: var(--text-3); margin-bottom: 2rem; }
     .login-input {
-      width: 100%; padding: 0.7rem 1rem; border: 1px solid #c5cfe0;
-      border-radius: 4px; font-size: 0.9rem; color: #1a2540;
-      outline: none; margin-bottom: 0.75rem;
-      transition: border-color 0.15s;
+      width: 100%; padding: 0.72rem 1rem; border: 1.5px solid var(--border-2);
+      border-radius: 9px; font-size: 0.9rem; font-family: inherit;
+      color: var(--text); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      margin-bottom: 0.85rem;
     }
-    .login-input:focus { border-color: #1565c0; }
-    .btn-login {
-      width: 100%; padding: 0.7rem 1rem;
-      background: #1a2d5a; color: #fff;
-      border: none; border-radius: 4px;
-      font-size: 0.9rem; font-weight: 700;
-      cursor: pointer; transition: background 0.15s;
+    .login-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
     }
-    .btn-login:hover { background: #1565c0; }
-    .login-error {
-      margin-top: 0.6rem; font-size: 0.8rem; color: #c0392b;
-      display: none;
+    .login-btn {
+      width: 100%; padding: 0.78rem;
+      background: linear-gradient(135deg, #0d1b2a 0%, #2563eb 100%);
+      color: #fff; border: none; border-radius: 9px;
+      font-size: 0.9rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.01em;
+    }
+    .login-btn:hover { opacity: 0.87; }
+    .login-error { margin-top: 0.75rem; font-size: 0.8rem; color: var(--red); display: none; }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--navy);
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      box-shadow: 0 1px 12px rgba(0,0,0,0.3);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 0.9rem; }
+    .topbar-logo {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.4);
+    }
+    .topbar-brand { display: flex; flex-direction: column; line-height: 1.2; }
+    .topbar-name  { font-size: 0.92rem; font-weight: 700; color: #f1f5f9; }
+    .topbar-sub   { font-size: 0.68rem; color: #64748b; }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .topbar-badge {
+      background: rgba(37,99,235,0.18); color: #93c5fd;
+      border: 1px solid rgba(37,99,235,0.35);
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 4px 11px; border-radius: 5px;
     }
 
-    /* ── Main ── */
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2.5rem 1.5rem;
-      gap: 1.5rem;
+    /* ── Page wrapper ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      display: flex; flex-direction: column; gap: 2.25rem;
     }
+
+    /* ── Section title ── */
+    .section-title {
+      margin-bottom: 0.9rem;
+    }
+    .section-title h2  { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .section-title p   { font-size: 0.78rem; color: var(--text-3); margin-top: 3px; }
 
     /* ── Cards ── */
-    .panel {
-      background: #fff;
-      border: 1px solid #d0d8e8;
-      border-radius: 6px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
-      width: 100%;
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
     }
-    .panel-header {
-      padding: 0.9rem 1.5rem;
-      border-bottom: 1px solid #d0d8e8;
-      background: #f5f7fb;
-      border-radius: 6px 6px 0 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .panel-header h2 {
-      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.07em;
-      text-transform: uppercase; color: #3a4d78;
-    }
-    .panel-body { padding: 1.5rem; }
+    .card-body { padding: 1.5rem; }
+    .card-body + .card-body { border-top: 1px solid var(--border); }
 
-    /* ── Upload panel (big/prominent) ── */
-    .upload-panel { max-width: 780px; }
-    .upload-panel .panel-body { padding: 2rem 2rem; }
+    /* ── Stats row ── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem 1.6rem 1.4rem;
+      box-shadow: var(--shadow);
+      border-top: 3px solid var(--border);
+    }
+    .stat-card-blue   { border-top-color: var(--blue); }
+    .stat-card-green  { border-top-color: var(--green); }
+    .stat-card-yellow { border-top-color: var(--yellow); }
+    .stat-label { font-size: 0.68rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.85rem; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 0.35rem; }
+    .stat-meta  { font-size: 0.7rem; color: var(--text-4); }
 
+    /* ── Upload ── */
     .drop-zone {
-      border: 2px dashed #b0bdd6;
-      border-radius: 6px;
-      padding: 3rem 2rem;
-      text-align: center;
-      cursor: pointer;
+      border: 2px dashed var(--border-2); border-radius: 9px;
+      padding: 2.5rem 2rem; text-align: center; cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
-      position: relative;
-      background: #f9fafd;
-      margin-bottom: 1.25rem;
+      position: relative; background: #fafafa;
     }
     .drop-zone:hover, .drop-zone.dragover {
-      border-color: #1565c0;
-      background: #eff5ff;
+      border-color: var(--blue); background: var(--blue-lt);
     }
     .drop-zone input[type=file] {
       position: absolute; inset: 0; opacity: 0;
       cursor: pointer; width: 100%; height: 100%;
     }
-    .drop-icon { font-size: 2.5rem; margin-bottom: 0.6rem; }
-    .drop-text { font-size: 0.9rem; color: #6b7a99; line-height: 1.6; }
-    .drop-text strong { color: #1565c0; font-size: 1rem; }
-    .file-selected {
-      margin-top: 0.6rem; font-size: 0.85rem; color: #1a5c2e;
-      font-weight: 600; display: none;
-    }
+    .drop-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
+    .drop-text { font-size: 0.87rem; color: var(--text-3); line-height: 1.65; }
+    .drop-text strong { color: var(--blue); font-weight: 600; }
+    .drop-text small  { font-size: 0.78rem; }
+    .file-selected { margin-top: 0.7rem; font-size: 0.82rem; color: var(--green); font-weight: 600; display: none; }
     .btn-upload {
-      width: 100%; padding: 0.85rem 1rem;
-      background: #1a2d5a; color: #fff;
-      border: none; border-radius: 4px;
-      font-size: 0.95rem; font-weight: 700;
-      letter-spacing: 0.02em; cursor: pointer;
-      transition: background 0.15s;
+      width: 100%; padding: 0.78rem 1rem; margin-top: 1.1rem;
+      background: linear-gradient(135deg, #0d1b2a 0%, #2563eb 100%);
+      color: #fff; border: none; border-radius: 9px;
+      font-size: 0.88rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.01em;
     }
-    .btn-upload:hover    { background: #1565c0; }
-    .btn-upload:disabled { background: #9aaabf; cursor: not-allowed; }
-
-    /* ── Upload result ── */
+    .btn-upload:hover    { opacity: 0.87; }
+    .btn-upload:disabled { background: #9ca3af; cursor: not-allowed; opacity: 1; }
     .result {
-      margin-top: 1.25rem; border-radius: 4px;
-      padding: 0.9rem 1.1rem; font-size: 0.83rem; display: none;
+      margin-top: 1rem; border-radius: 9px;
+      padding: 1rem 1.2rem; font-size: 0.82rem; display: none;
     }
-    .result.success { background: #f0faf4; border: 1px solid #4caf82; color: #1a5c2e; }
-    .result.error   { background: #fff5f5; border: 1px solid #e07575; color: #7a1c1c; }
-    .result-title { font-weight: 700; margin-bottom: 0.5rem; font-size: 0.88rem; }
-    .preview-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.8rem; }
-    .preview-table thead tr { background: #e8f0e8; }
+    .result.success { background: var(--green-lt); border: 1px solid #6ee7b7; color: #064e3b; }
+    .result.error   { background: var(--red-lt);   border: 1px solid #fca5a5; color: #7f1d1d; }
+    .result-title   { font-weight: 700; margin-bottom: 0.45rem; font-size: 0.86rem; }
+    .preview-table  { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.78rem; }
+    .preview-table thead tr { background: #d1fae5; }
     .preview-table th {
-      text-align: left; padding: 0.4rem 0.6rem;
-      font-weight: 700; color: #1a5c2e; font-size: 0.72rem;
+      text-align: left; padding: 0.35rem 0.65rem;
+      font-weight: 700; color: #064e3b; font-size: 0.7rem;
       text-transform: uppercase; letter-spacing: 0.04em;
-      border-bottom: 2px solid #4caf82;
+      border-bottom: 2px solid #6ee7b7;
     }
-    .preview-table td { padding: 0.4rem 0.6rem; border-bottom: 1px solid #d4ead8; }
+    .preview-table td { padding: 0.38rem 0.65rem; border-bottom: 1px solid #d1fae5; }
     .preview-table tbody tr:last-child td { border-bottom: none; }
 
-    /* ── Stats + Admin row ── */
-    .two-col {
-      max-width: 780px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      width: 100%;
-    }
+    /* ── Grid layouts ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
 
-    /* ── Stats ── */
-    .stat-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
-    .stat-box {
-      flex: 1; background: #f5f7fb; border: 1px solid #d0d8e8;
-      border-radius: 4px; padding: 0.75rem 1rem;
+    /* ── Info list ── */
+    .info-list { display: flex; flex-direction: column; }
+    .info-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.58rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem;
     }
-    .stat-label { font-size: 0.68rem; color: #6b7a99; text-transform: uppercase;
-                  letter-spacing: 0.06em; font-weight: 600; }
-    .stat-value { font-size: 1.4rem; font-weight: 700; color: #1a2d5a;
-                  margin-top: 0.2rem; line-height: 1; }
-    .stat-meta  { font-size: 0.7rem; color: #8896b3; margin-top: 0.3rem; }
-    .info-row { display: flex; justify-content: space-between;
-                font-size: 0.78rem; padding: 0.4rem 0;
-                border-bottom: 1px solid #edf0f7; color: #3a4d78; }
-    .info-row:last-child { border-bottom: none; }
-    .info-row span:first-child { color: #6b7a99; font-weight: 500; }
-    .info-row span:last-child  { font-weight: 600; }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-row .ik { color: var(--text-3); font-weight: 500; }
+    .info-row .iv { color: var(--text-2); font-weight: 600; }
 
-    /* ── Admin management ── */
+    /* ── Form elements ── */
     .field-label {
-      display: block; font-size: 0.78rem; font-weight: 600;
-      color: #3a4d78; margin-bottom: 0.4rem; letter-spacing: 0.01em;
+      display: block; font-size: 0.75rem; font-weight: 600;
+      color: var(--text-2); margin-bottom: 0.4rem; letter-spacing: 0.01em;
     }
     .field-input {
-      width: 100%; padding: 0.55rem 0.8rem; border: 1px solid #c5cfe0;
-      border-radius: 4px; font-size: 0.85rem; color: #1a2540;
-      outline: none; margin-bottom: 0.65rem;
-      transition: border-color 0.15s;
+      width: 100%; padding: 0.62rem 0.9rem;
+      border: 1.5px solid var(--border-2); border-radius: 9px;
+      font-size: 0.875rem; font-family: inherit; color: var(--text); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s; background: #fff;
     }
-    .field-input:focus { border-color: #1565c0; }
+    .field-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    /* ── Buttons ── */
     .btn-primary {
-      width: 100%; padding: 0.6rem 1rem;
-      background: #1a2d5a; color: #fff;
-      border: none; border-radius: 4px;
-      font-size: 0.85rem; font-weight: 700;
-      cursor: pointer; transition: background 0.15s;
+      padding: 0.62rem 1.1rem;
+      background: linear-gradient(135deg, #0d1b2a 0%, #2563eb 100%);
+      color: #fff; border: none; border-radius: 9px;
+      font-size: 0.84rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: opacity 0.15s; white-space: nowrap;
+      letter-spacing: 0.01em;
     }
-    .btn-primary:hover { background: #1565c0; }
-    .admin-msg {
-      margin-top: 0.5rem; font-size: 0.78rem; display: none; font-weight: 600;
+    .btn-primary:hover    { opacity: 0.87; }
+    .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; opacity: 1; }
+    .btn-outline {
+      padding: 0.55rem 1rem;
+      background: #fff; color: var(--text-2);
+      border: 1.5px solid var(--border-2); border-radius: 9px;
+      font-size: 0.82rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
     }
-    .admin-msg.ok  { color: #1a5c2e; }
-    .admin-msg.err { color: #7a1c1c; }
+    .btn-outline:hover    { background: #f9fafb; border-color: #9ca3af; }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ── Full-width section ── */
-    .full-width { max-width: 780px; width: 100%; }
+    /* ── Feedback messages ── */
+    .msg { font-size: 0.78rem; margin-top: 0.5rem; font-weight: 500; min-height: 1.1rem; }
+    .msg.ok  { color: var(--green); }
+    .msg.err { color: var(--red); }
+    /* legacy support */
+    .admin-msg        { font-size: 0.78rem; margin-top: 0.5rem; font-weight: 500; display: none; }
+    .admin-msg.ok     { color: var(--green); }
+    .admin-msg.err    { color: var(--red); }
 
-    /* ── Admins list ── */
-    .admin-list { margin-top: 0.75rem; }
+    /* ── Admin chips ── */
+    .admin-list  { display: flex; flex-wrap: wrap; gap: 0.45rem; }
     .admin-chip {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      background: #eef5ff; border: 1px solid #b0c8f0;
-      color: #1a2d5a; border-radius: 4px;
-      padding: 0.3rem 0.7rem; font-size: 0.8rem; font-weight: 600;
-      margin: 0.25rem 0.25rem 0 0;
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      background: var(--blue-lt); border: 1px solid var(--blue-mid);
+      color: #1e40af; border-radius: 7px;
+      padding: 0.3rem 0.75rem; font-size: 0.8rem; font-weight: 500;
     }
     .admin-chip .remove-btn {
       background: none; border: none; cursor: pointer;
-      color: #6b7a99; font-size: 0.85rem; padding: 0;
+      color: #93c5fd; font-size: 0.85rem; padding: 0;
       line-height: 1; transition: color 0.15s;
     }
-    .admin-chip .remove-btn:hover { color: #c0392b; }
+    .admin-chip .remove-btn:hover { color: var(--red); }
     .admin-chip.default-admin .remove-btn { display: none; }
 
-    /* ── Key pool ── */
-    .key-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-    .key-table th {
-      text-align: left; padding: 0.4rem 0.75rem;
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
-      text-transform: uppercase; color: #3a4d78;
-      background: #f5f7fb; border-bottom: 2px solid #d0d8e8;
+    /* ── Data table ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .data-table thead th {
+      text-align: left; padding: 0.6rem 0.9rem;
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--text-3);
+      background: #f9fafb; border-bottom: 1px solid var(--border);
     }
-    .key-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #edf0f7; }
-    .key-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody td {
+      padding: 0.72rem 0.9rem; border-bottom: 1px solid var(--border);
+      color: var(--text-2);
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover         { background: #fafbfc; }
+
+    /* ── Badges ── */
     .badge {
-      display: inline-block; padding: 2px 9px; border-radius: 10px;
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em;
-      text-transform: uppercase;
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 20px;
+      font-size: 0.67rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
     }
-    .badge-active       { background: #e6f4ec; color: #1a6b3a; border: 1px solid #9dd4b2; }
-    .badge-cooling      { background: #fff8e6; color: #7a5c00; border: 1px solid #f0c96a; }
-    .badge-exhausted    { background: #fef0f0; color: #8b2020; border: 1px solid #e8a5a5; }
-    .badge-valid        { background: #e6f4ec; color: #1a6b3a; border: 1px solid #9dd4b2; }
-    .badge-invalid      { background: #fef0f0; color: #8b2020; border: 1px solid #e8a5a5; }
-    .badge-rate-limited { background: #fff8e6; color: #7a5c00; border: 1px solid #f0c96a; }
-    .badge-server-error { background: #f0f0ff; color: #3a2080; border: 1px solid #a5a5e8; }
-    .badge-validating   { background: #f5f7fb; color: #3a4d78; border: 1px solid #d0d8e8; }
-    .pool-refresh       { font-size: 0.7rem; color: #8896b3; margin-top: 0.5rem; text-align: right; }
-    .key-preview        { font-family: monospace; font-size: 0.78rem; color: #4a5568; letter-spacing: 0.02em; }
-    .btn-table          {
-      border: none; cursor: pointer; border-radius: 4px;
-      font-size: 0.7rem; font-weight: 600; padding: 2px 8px;
-      letter-spacing: 0.03em; transition: opacity 0.15s;
+    .badge-active       { background: var(--green-lt); color: #065f46; border: 1px solid #6ee7b7; }
+    .badge-cooling      { background: var(--yellow-lt); color: #78350f; border: 1px solid #fcd34d; }
+    .badge-exhausted    { background: var(--red-lt); color: #7f1d1d; border: 1px solid #fca5a5; }
+    .badge-valid        { background: var(--green-lt); color: #065f46; border: 1px solid #6ee7b7; }
+    .badge-invalid      { background: var(--red-lt); color: #7f1d1d; border: 1px solid #fca5a5; }
+    .badge-rate-limited { background: var(--yellow-lt); color: #78350f; border: 1px solid #fcd34d; }
+    .badge-server-error { background: var(--purple-lt); color: #4c1d95; border: 1px solid #c4b5fd; }
+    .badge-validating   { background: #f1f5f9; color: var(--text-3); border: 1px solid var(--border-2); }
+    .badge-error        { background: var(--red-lt); color: #7f1d1d; border: 1px solid #fca5a5; }
+
+    /* ── Key monospace ── */
+    .key-mono { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.78rem; color: var(--text-3); letter-spacing: 0.02em; }
+
+    /* ── Inline action buttons ── */
+    .btn-xs {
+      border: 1.5px solid; cursor: pointer; border-radius: 6px;
+      font-size: 0.68rem; font-weight: 600; padding: 3px 8px;
+      font-family: inherit; transition: background 0.12s; background: #fff;
     }
-    .btn-table:hover    { opacity: 0.8; }
-    .btn-replace        { background: #e8f0fe; color: #1a56db; }
-    .btn-remove         { background: #fef0f0; color: #8b2020; }
-    .key-add-row        { display: flex; gap: 0.5rem; margin-top: 0.75rem; align-items: center; }
-    .key-add-input      {
-      flex: 1; padding: 0.4rem 0.65rem; border: 1px solid #c8d0e0;
-      border-radius: 6px; font-size: 0.8rem; font-family: monospace;
-      background: #f9fafc; color: #1a2340;
+    .btn-xs-blue { border-color: #bfdbfe; color: #1d4ed8; }
+    .btn-xs-blue:hover { background: var(--blue-lt); }
+    .btn-xs-red  { border-color: #fecaca; color: var(--red); }
+    .btn-xs-red:hover  { background: var(--red-lt); }
+
+    /* ── Table toolbar ── */
+    .table-toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.65rem;
     }
-    .key-add-input:focus { outline: none; border-color: #4a6fa5; box-shadow: 0 0 0 2px rgba(74,111,165,0.15); }
-    .key-action-msg     { font-size: 0.75rem; margin-top: 0.4rem; min-height: 1rem; }
+    .table-meta { font-size: 0.74rem; color: var(--text-4); }
+
+    /* ── Add key area ── */
+    .add-key-wrap {
+      border-top: 1px solid var(--border); padding-top: 1.1rem; margin-top: 1rem;
+    }
+    .add-key-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 0.55rem;
+    }
+    .add-key-row { display: flex; gap: 0.6rem; align-items: center; }
+    .key-input {
+      flex: 1; padding: 0.62rem 0.9rem;
+      border: 1.5px solid var(--border-2); border-radius: 9px;
+      font-size: 0.82rem; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      color: var(--text); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .key-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
 
     /* ── Spinner ── */
     .spinner {
-      display: inline-block; width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
-      border-radius: 50%; animation: spin 0.65s linear infinite;
-      margin-right: 0.4rem; vertical-align: middle;
+      display: inline-block; width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+      margin-right: 0.35rem; vertical-align: middle;
+    }
+    .spinner-sm {
+      display: inline-block; width: 12px; height: 12px;
+      border: 2px solid rgba(37,99,235,0.2); border-top-color: var(--blue);
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+      margin-right: 0.3rem; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Footer ── */
-    footer {
-      text-align: center; padding: 1rem;
-      font-size: 0.72rem; color: #8896b3;
-      border-top: 1px solid #d0d8e8;
-      background: #f5f7fb; flex-shrink: 0;
+    /* ── Sub-section label ── */
+    .sub-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 0.75rem;
     }
 
-    @media (max-width: 600px) {
-      .two-col { grid-template-columns: 1fr; }
+    /* ── Divider ── */
+    hr.divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 1.5rem;
+      font-size: 0.72rem; color: var(--text-4);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 800px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .grid-2     { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 500px) {
+      .stats-grid  { grid-template-columns: 1fr; }
+      .topbar      { padding: 0 1rem; }
+      .page        { padding: 1.25rem 0.9rem 3rem; gap: 1.75rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- Login overlay (shown if ADMIN_SECRET is required and not yet authenticated) -->
+<!-- ── Login overlay ── -->
 <div id="loginOverlay" style="display:none">
   <div class="login-card">
-    <div class="login-icon">🔐</div>
-    <div class="login-title">Admin Access Required</div>
-    <div class="login-sub">Enter the admin secret to continue.</div>
-    <input type="password" id="secretInput" class="login-input" placeholder="Admin secret" autocomplete="off">
-    <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In</button>
+    <div class="login-logo">🎓</div>
+    <div class="login-title">Admin Portal</div>
+    <div class="login-sub">EPAM Campus Junior Training &mdash; Internal Access Only</div>
+    <input type="password" id="secretInput" class="login-input"
+           placeholder="Enter admin secret" autocomplete="off">
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In &rarr;</button>
     <div class="login-error" id="loginError">Incorrect secret. Please try again.</div>
   </div>
 </div>
 
-<header>
-  <div class="header-left">
-    <div class="header-icon">🎓</div>
-    <div>
-      <div class="header-title">EPAM — Contribution Assistant</div>
-      <div class="header-sub">EPAM Systems / Internal Administration</div>
+<!-- ── Topbar ── -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">🎓</div>
+    <div class="topbar-brand">
+      <div class="topbar-name">CONTRIBOT ADMIN</div>
+      <div class="topbar-sub">EPAM Campus Junior Training</div>
     </div>
   </div>
-  <div class="header-badge">Admin Portal</div>
+  <div class="topbar-right">
+    <div class="topbar-badge">Admin Portal</div>
+  </div>
 </header>
 
+<!-- ── Main ── -->
 <main>
+<div class="page">
 
-  <!-- Upload section — full width, prominent -->
-  <div class="panel upload-panel">
-    <div class="panel-header">
-      <span>📤</span>
-      <h2>Upload New Learn Export</h2>
+  <!-- ── Stat cards ── -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card-blue">
+      <div class="stat-label">Contributors</div>
+      <div class="stat-value" id="stat-count">—</div>
+      <div class="stat-meta">Eligible records</div>
     </div>
-    <div class="panel-body">
-      <form id="uploadForm">
-        <div class="drop-zone" id="dropZone">
-          <input type="file" id="fileInput" name="file" accept=".xlsx">
-          <div class="drop-icon">📊</div>
-          <div class="drop-text">
-            <strong>Click to select</strong> or drag and drop<br>
-            Download the latest export from <em>learn.epam.com</em> and upload here.<br>
-            Contribution data will be recalculated and applied immediately.
-          </div>
-          <div class="file-selected" id="fileName"></div>
-        </div>
-        <button type="submit" class="btn-upload" id="uploadBtn" disabled>
-          Upload and Regenerate Data
-        </button>
-      </form>
-      <div class="result" id="result"></div>
+    <div class="stat-card stat-card-green">
+      <div class="stat-label">Total Bonus Pool</div>
+      <div class="stat-value" id="stat-bonus">—</div>
+      <div class="stat-meta">At $15 / point</div>
+    </div>
+    <div class="stat-card stat-card-yellow">
+      <div class="stat-label">Last Synced</div>
+      <div class="stat-value" id="stat-updated" style="font-size:1.05rem;margin-bottom:0.35rem;">—</div>
+      <div class="stat-meta">Learn export</div>
     </div>
   </div>
 
-  <!-- Stats + Admin management row -->
-  <div class="two-col">
+  <!-- ── Upload ── -->
+  <div>
+    <div class="section-title">
+      <h2>Upload Learn Export</h2>
+      <p>Upload the latest .xlsx export from learn.epam.com to refresh all contribution data</p>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <form id="uploadForm">
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" name="file" accept=".xlsx">
+            <div class="drop-icon">📊</div>
+            <div class="drop-text">
+              <strong>Click to select a file</strong> or drag &amp; drop here<br>
+              <small>Accepts .xlsx exports from learn.epam.com · Recalculates all contribution data on upload</small>
+            </div>
+            <div class="file-selected" id="fileName"></div>
+          </div>
+          <button type="submit" class="btn-upload" id="uploadBtn" disabled>
+            Upload &amp; Regenerate Data
+          </button>
+        </form>
+        <div class="result" id="result"></div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Data stats -->
-    <div class="panel">
-      <div class="panel-header"><span>📈</span><h2>Current Dataset</h2></div>
-      <div class="panel-body">
-        <div class="stat-row">
-          <div class="stat-box">
-            <div class="stat-label">Contributors</div>
-            <div class="stat-value" id="stat-count">—</div>
-            <div class="stat-meta">Eligible records</div>
+  <!-- ── Dataset info + Admin management ── -->
+  <div class="grid-2">
+
+    <!-- Dataset config -->
+    <div>
+      <div class="section-title">
+        <h2>Dataset Configuration</h2>
+        <p>Rules applied when processing the Learn export</p>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="info-list">
+            <div class="info-row"><span class="ik">Data Source</span><span class="iv">Learn Export (.xlsx)</span></div>
+            <div class="info-row"><span class="ik">Eligible Format</span><span class="iv">Group Meeting w/ Contributor</span></div>
+            <div class="info-row"><span class="ik">Eligible Statuses</span><span class="iv">Submitted &amp; Approved</span></div>
+            <div class="info-row"><span class="ik">Point Value</span><span class="iv">$15 per point</span></div>
           </div>
-          <div class="stat-box">
-            <div class="stat-label">Total Bonus Pool</div>
-            <div class="stat-value" id="stat-bonus">—</div>
-            <div class="stat-meta">At $15 / point</div>
-          </div>
-        </div>
-        <div class="info-row">
-          <span>Data Source</span><span>Learn Export (.xlsx)</span>
-        </div>
-        <div class="info-row">
-          <span>Eligible Format</span><span>Group Meeting w/ Contributor</span>
-        </div>
-        <div class="info-row">
-          <span>Eligible Statuses</span><span>Submitted, Approved</span>
-        </div>
-        <div class="info-row">
-          <span>Last Refreshed</span>
-          <span id="stat-updated">Loading...</span>
         </div>
       </div>
     </div>
 
     <!-- Add admin -->
-    <div class="panel">
-      <div class="panel-header"><span>👤</span><h2>Add Administrator</h2></div>
-      <div class="panel-body">
-        <label class="field-label" for="adminEmailInput">EPAM Email Address</label>
-        <input type="email" id="adminEmailInput" class="field-input"
-               placeholder="firstname_lastname@epam.com" autocomplete="off">
-        <button class="btn-primary" onclick="addAdmin()">Add Admin</button>
-        <div class="admin-msg" id="addAdminMsg"></div>
+    <div>
+      <div class="section-title">
+        <h2>Add Administrator</h2>
+        <p>Grant admin access to an EPAM email address</p>
       </div>
-    </div>
-
-  </div>
-
-  <!-- Admins list -->
-  <div class="panel full-width">
-    <div class="panel-header"><span>🛡️</span><h2>Current Administrators</h2></div>
-    <div class="panel-body">
-      <div class="admin-list" id="adminList">
-        <span style="color:#8896b3;font-size:0.82rem;">Loading...</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- API Key pool -->
-  <div class="panel full-width">
-    <div class="panel-header" style="justify-content:space-between;align-items:center;">
-      <div style="display:flex;align-items:center;gap:0.5rem;"><span>🔑</span><h2>API Key Pool</h2></div>
-      <button class="btn-primary" id="validateBtn"
-              style="font-size:0.78rem;padding:0.3rem 0.9rem;margin:0;"
-              onclick="validateKeys()">Validate All Keys</button>
-    </div>
-    <div class="panel-body">
-      <table class="key-table">
-        <thead>
-          <tr>
-            <th>Slot</th>
-            <th>Key Preview</th>
-            <th>State</th>
-            <th>Failures</th>
-            <th>Live Check</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="keyPoolBody">
-          <tr><td colspan="6" style="color:#8896b3;font-size:0.8rem;">Loading...</td></tr>
-        </tbody>
-      </table>
-      <p class="pool-refresh" id="poolRefreshTime"></p>
-
-      <!-- Add new key -->
-      <div style="border-top:1px solid #edf0f7;margin-top:0.75rem;padding-top:0.75rem;">
-        <div style="font-size:0.75rem;font-weight:700;color:#3a4d78;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em;">Add New Key</div>
-        <div class="key-add-row">
-          <input type="password" id="newKeyInput" class="key-add-input"
-                 placeholder="Paste new Gemini API key here" autocomplete="off">
-          <button class="btn-primary" style="font-size:0.78rem;padding:0.4rem 0.9rem;white-space:nowrap;"
-                  onclick="addKey()">Add Key</button>
+      <div class="card">
+        <div class="card-body">
+          <label class="field-label" for="adminEmailInput">EPAM Email Address</label>
+          <input type="email" id="adminEmailInput" class="field-input"
+                 placeholder="firstname_lastname@epam.com" autocomplete="off"
+                 style="margin-bottom:0.85rem;">
+          <button class="btn-primary" style="width:100%;" onclick="addAdmin()">Add Administrator</button>
+          <div class="admin-msg" id="addAdminMsg"></div>
         </div>
-        <div class="key-action-msg" id="keyActionMsg"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Current admins ── -->
+  <div>
+    <div class="section-title">
+      <h2>Current Administrators</h2>
+      <p>All accounts with access to this admin portal</p>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="admin-list" id="adminList">
+          <span style="color:var(--text-4)">Loading...</span>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- ── API Key Pool ── -->
+  <div>
+    <div class="section-title">
+      <h2>Gemini API Key Pool</h2>
+      <p>Manage API keys for Gemini model access &mdash; changes persist to Redis across redeployments</p>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="table-toolbar">
+          <div class="table-meta" id="poolRefreshTime">Loading…</div>
+          <button class="btn-outline" id="validateBtn" onclick="validateKeys()"
+                  style="font-size:0.78rem;padding:0.42rem 0.9rem;">
+            ✓&nbsp; Validate All Keys
+          </button>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Key Preview</th>
+              <th>State</th>
+              <th>Failures</th>
+              <th>Available In</th>
+              <th>Live Check</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="keyPoolBody">
+            <tr><td colspan="7" style="padding:1.5rem 0.9rem;color:var(--text-4);">
+              <span class="spinner-sm"></span>Loading key pool…
+            </td></tr>
+          </tbody>
+        </table>
+
+        <div class="add-key-wrap">
+          <div class="add-key-label">Add New Key</div>
+          <div class="add-key-row">
+            <input type="password" id="newKeyInput" class="key-input"
+                   placeholder="Paste Gemini API key here" autocomplete="off">
+            <button class="btn-primary" onclick="addKey()" style="padding:0.62rem 1rem;">
+              Add Key
+            </button>
+          </div>
+          <div class="msg" id="keyActionMsg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
 </main>
 
 <footer>
@@ -568,13 +696,8 @@ ADMIN_HTML = r"""<!DOCTYPE html>
 <script>
   // ── Auth ──────────────────────────────────────────────────────────────────
   const SECRET_KEY = 'contribot_admin_token';
-
-  function getToken() { return localStorage.getItem(SECRET_KEY) || ''; }
-
-  function authHeaders() {
-    const t = getToken();
-    return t ? { 'X-Admin-Token': t } : {};
-  }
+  function getToken()    { return localStorage.getItem(SECRET_KEY) || ''; }
+  function authHeaders() { const t = getToken(); return t ? { 'X-Admin-Token': t } : {}; }
 
   async function checkAuth() {
     const needsAuth = await fetch('/admin/auth-required').then(r => r.json());
@@ -617,8 +740,7 @@ ADMIN_HTML = r"""<!DOCTYPE html>
   // ── Stats ─────────────────────────────────────────────────────────────────
   async function loadStats() {
     try {
-      const r = await fetch('/api/stats', { headers: authHeaders() });
-      const d = await r.json();
+      const d = await fetch('/api/stats', { headers: authHeaders() }).then(r => r.json());
       document.getElementById('stat-count').textContent = d.people_count ?? '0';
       document.getElementById('stat-bonus').textContent = d.total_bonus_usd != null
         ? '$' + Number(d.total_bonus_usd).toLocaleString('en-US', {minimumFractionDigits: 2})
@@ -634,32 +756,33 @@ ADMIN_HTML = r"""<!DOCTYPE html>
   // ── Admins ────────────────────────────────────────────────────────────────
   async function loadAdmins() {
     try {
-      const d = await fetch('/api/admin/list', { headers: authHeaders() }).then(r => r.json());
-      const el = document.getElementById('adminList');
+      const d   = await fetch('/api/admin/list', { headers: authHeaders() }).then(r => r.json());
+      const el  = document.getElementById('adminList');
       if (!d.admins || !d.admins.length) {
-        el.innerHTML = '<span style="color:#8896b3;font-size:0.82rem;">No admins configured.</span>';
+        el.innerHTML = '<span style="color:var(--text-4);font-size:0.82rem;">No admins configured.</span>';
         return;
       }
       const defaultAdmins = new Set(['vishal_bhandari@epam.com']);
       el.innerHTML = d.admins.map(email => {
-        const isDefault = defaultAdmins.has(email.toLowerCase());
-        return `<span class="admin-chip ${isDefault ? 'default-admin' : ''}">
+        const isDef = defaultAdmins.has(email.toLowerCase());
+        return `<span class="admin-chip ${isDef ? 'default-admin' : ''}">
           ${email}
-          <button class="remove-btn" onclick="removeAdmin('${email}')" title="Remove">✕</button>
+          <button class="remove-btn" onclick="removeAdmin('${email}')" title="Remove">&#x2715;</button>
         </span>`;
       }).join('');
-    } catch(e) {}
+    } catch(e) {
+      document.getElementById('adminList').innerHTML =
+        '<span style="color:var(--text-4)">Could not load administrators.</span>';
+    }
   }
 
   async function addAdmin() {
-    const email  = document.getElementById('adminEmailInput').value.trim().toLowerCase();
-    const msgEl  = document.getElementById('addAdminMsg');
+    const email = document.getElementById('adminEmailInput').value.trim().toLowerCase();
+    const msgEl = document.getElementById('addAdminMsg');
     msgEl.style.display = 'none';
     if (!email || !email.includes('@')) {
-      msgEl.textContent = 'Please enter a valid email address.';
-      msgEl.className = 'admin-msg err';
-      msgEl.style.display = 'block';
-      return;
+      msgEl.textContent = 'Please enter a valid EPAM email address.';
+      msgEl.className = 'admin-msg err'; msgEl.style.display = 'block'; return;
     }
     try {
       const d = await fetch('/api/admin/add', {
@@ -668,12 +791,12 @@ ADMIN_HTML = r"""<!DOCTYPE html>
         body: JSON.stringify({ email })
       }).then(r => r.json());
       if (d.success) {
-        msgEl.textContent = `${email} added as admin.`;
+        msgEl.textContent = `${email} added as administrator.`;
         msgEl.className = 'admin-msg ok';
         document.getElementById('adminEmailInput').value = '';
         loadAdmins();
       } else {
-        msgEl.textContent = d.error || 'Failed to add admin.';
+        msgEl.textContent = d.error || 'Failed to add administrator.';
         msgEl.className = 'admin-msg err';
       }
     } catch(e) {
@@ -684,7 +807,7 @@ ADMIN_HTML = r"""<!DOCTYPE html>
   }
 
   async function removeAdmin(email) {
-    if (!confirm(`Remove ${email} from admins?`)) return;
+    if (!confirm(`Remove ${email} from administrators?`)) return;
     try {
       const d = await fetch('/api/admin/remove', {
         method: 'POST',
@@ -692,153 +815,147 @@ ADMIN_HTML = r"""<!DOCTYPE html>
         body: JSON.stringify({ email })
       }).then(r => r.json());
       if (d.success) loadAdmins();
-      else alert(d.message || 'Could not remove admin.');
+      else alert(d.message || 'Could not remove administrator.');
     } catch(e) { alert('Network error.'); }
   }
 
   // ── Key pool ──────────────────────────────────────────────────────────────
-  // Stores last validation results by key_index; preserved across auto-refresh.
   let _lastValidation = {};
 
-  function _keyActionMsg(msg, ok) {
+  function _keyMsg(msg, ok) {
     const el = document.getElementById('keyActionMsg');
-    el.textContent = msg;
-    el.style.color = ok ? '#1a6b3a' : '#8b2020';
+    el.textContent = msg; el.className = 'msg ' + (ok ? 'ok' : 'err');
   }
 
   async function loadKeyPool() {
     try {
-      const r = await fetch('/api/keys/status', { headers: authHeaders() });
-      const d = await r.json();
+      const d     = await fetch('/api/keys/status', { headers: authHeaders() }).then(r => r.json());
       const tbody = document.getElementById('keyPoolBody');
       if (!d.keys || !d.keys.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="color:#8896b3">No key pool configured</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="color:var(--text-4);padding:1.25rem 0.9rem;">No keys configured.</td></tr>';
         return;
       }
       tbody.innerHTML = d.keys.map(k => {
-        const cls   = k.state === 'active' ? 'badge-active'
+        const cls   = k.state === 'active'  ? 'badge-active'
                     : k.state === 'cooling' ? 'badge-cooling' : 'badge-exhausted';
+        const avail = k.available_in_seconds != null ? fmtDur(k.available_in_seconds) : '—';
         const vr    = _lastValidation[k.key_index];
-        const liveCell = vr
+        const live  = vr
           ? `<span class="badge badge-${vr.vstatus.replace(/_/g,'-')}">${vr.vstatus.replace(/_/g,' ')}</span>`
-            + (vr.detail ? `<br><small style="color:#8896b3;font-size:0.68rem;">${vr.detail}</small>` : '')
-          : '<span style="color:#8896b3;font-size:0.75rem;">—</span>';
+            + (vr.detail ? `<br><span style="color:var(--text-4);font-size:0.68rem;line-height:1.4;display:block;margin-top:2px;">${vr.detail}</span>` : '')
+          : '<span style="color:var(--text-4);">—</span>';
         return `<tr>
-          <td><strong>${k.key_index}</strong></td>
-          <td class="key-preview">${k.key_preview || '—'}</td>
+          <td style="font-weight:600;color:var(--text);">${k.key_index}</td>
+          <td class="key-mono">${k.key_preview || '—'}</td>
           <td><span class="badge ${cls}">${k.state}</span></td>
           <td>${k.fail_count}</td>
-          <td>${liveCell}</td>
+          <td style="color:var(--text-3);">${avail}</td>
+          <td>${live}</td>
           <td>
-            <button class="btn-table btn-replace" onclick="replaceKey(${k.key_index})">Replace</button>
-            <button class="btn-table btn-remove" style="margin-left:4px" onclick="removeKey(${k.key_index})">Remove</button>
+            <button class="btn-xs btn-xs-blue" onclick="replaceKey(${k.key_index})">Replace</button>
+            <button class="btn-xs btn-xs-red" style="margin-left:4px;" onclick="removeKey(${k.key_index})">Remove</button>
           </td>
         </tr>`;
       }).join('');
       document.getElementById('poolRefreshTime').textContent =
-        'Last refreshed: ' + new Date().toLocaleTimeString('en-US');
+        d.keys.length + ' key' + (d.keys.length === 1 ? '' : 's') +
+        ' · refreshed ' + new Date().toLocaleTimeString('en-US');
     } catch(e) {
       document.getElementById('keyPoolBody').innerHTML =
-        '<tr><td colspan="6" style="color:#8896b3">Could not load pool status</td></tr>';
+        '<tr><td colspan="7" style="color:var(--text-4);padding:1rem 0.9rem;">Could not load pool status.</td></tr>';
     }
   }
 
   async function validateKeys() {
     const btn = document.getElementById('validateBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Validating...';
+    btn.innerHTML = '<span class="spinner-sm"></span>Validating&hellip;';
     _lastValidation = {};
     document.querySelectorAll('#keyPoolBody tr').forEach(tr => {
       const cells = tr.querySelectorAll('td');
-      if (cells.length >= 5)
-        cells[4].innerHTML = '<span class="badge badge-validating">checking</span>';
+      if (cells.length >= 6) cells[5].innerHTML = '<span class="badge badge-validating">checking</span>';
     });
     try {
-      const r = await fetch('/api/keys/validate', { method: 'POST', headers: authHeaders() });
-      const d = await r.json();
+      const d = await fetch('/api/keys/validate', { method: 'POST', headers: authHeaders() }).then(r => r.json());
       if (!d.keys) throw new Error(d.error || 'Validation failed');
       d.keys.forEach(k => {
         _lastValidation[k.key_index] = { vstatus: k.validation_status, detail: k.detail || '' };
       });
       await loadKeyPool();
       document.getElementById('poolRefreshTime').textContent =
-        'Validated at ' + new Date().toLocaleTimeString('en-US');
+        d.keys.length + ' key' + (d.keys.length === 1 ? '' : 's') +
+        ' · validated ' + new Date().toLocaleTimeString('en-US');
     } catch(e) {
       document.getElementById('poolRefreshTime').textContent = 'Validation error: ' + e.message;
     } finally {
       btn.disabled = false;
-      btn.innerHTML = 'Validate All Keys';
+      btn.innerHTML = '&#x2713;&nbsp; Validate All Keys';
     }
   }
 
   async function addKey() {
-    const input = document.getElementById('newKeyInput');
-    const key = input.value.trim();
-    if (!key) { _keyActionMsg('Paste a key first.', false); return; }
+    const inp = document.getElementById('newKeyInput');
+    const key = inp.value.trim();
+    if (!key) { _keyMsg('Paste a key first.', false); return; }
     try {
-      const r = await fetch('/api/keys', {
+      const d = await fetch('/api/keys', {
         method: 'POST',
         headers: { ...authHeaders(), 'Content-Type': 'application/json' },
         body: JSON.stringify({ key })
-      });
-      const d = await r.json();
+      }).then(r => r.json());
       if (!d.success) throw new Error(d.error || 'Failed');
-      input.value = '';
-      _keyActionMsg(`Key added as slot ${d.key_index} (${d.total} total).`, true);
+      inp.value = '';
+      _keyMsg(`Key added as slot ${d.key_index} (${d.total} total).`, true);
       await loadKeyPool();
-    } catch(e) { _keyActionMsg('Error: ' + e.message, false); }
+    } catch(e) { _keyMsg('Error: ' + e.message, false); }
   }
 
   async function replaceKey(idx) {
-    const newKey = window.prompt(`Replace Key ${idx} with a new key:\n(leave blank to cancel)`);
-    if (!newKey || !newKey.trim()) return;
+    const nk = window.prompt(`Paste the replacement key for slot ${idx}:`);
+    if (!nk || !nk.trim()) return;
     try {
-      const r = await fetch(`/api/keys/${idx}`, {
+      const d = await fetch(`/api/keys/${idx}`, {
         method: 'PUT',
         headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: newKey.trim() })
-      });
-      const d = await r.json();
+        body: JSON.stringify({ key: nk.trim() })
+      }).then(r => r.json());
       if (!d.success) throw new Error(d.error || 'Failed');
       delete _lastValidation[idx];
-      _keyActionMsg(`Key ${idx} replaced.`, true);
+      _keyMsg(`Key ${idx} replaced successfully.`, true);
       await loadKeyPool();
-    } catch(e) { _keyActionMsg('Error: ' + e.message, false); }
+    } catch(e) { _keyMsg('Error: ' + e.message, false); }
   }
 
   async function removeKey(idx) {
-    if (!confirm(`Remove Key ${idx} from the pool?\nThis takes effect immediately.`)) return;
+    if (!confirm(`Remove Key ${idx} from the pool? This takes effect immediately.`)) return;
     try {
-      const r = await fetch(`/api/keys/${idx}`, { method: 'DELETE', headers: authHeaders() });
-      const d = await r.json();
+      const d = await fetch(`/api/keys/${idx}`, { method: 'DELETE', headers: authHeaders() }).then(r => r.json());
       if (!d.success) throw new Error(d.error || 'Failed');
       delete _lastValidation[idx];
-      _keyActionMsg(`Key ${idx} removed.`, true);
+      _keyMsg(`Key ${idx} removed.`, true);
       await loadKeyPool();
-    } catch(e) { _keyActionMsg('Error: ' + e.message, false); }
+    } catch(e) { _keyMsg('Error: ' + e.message, false); }
   }
 
   function fmtDur(sec) {
     if (sec < 60)   return Math.round(sec) + 's';
-    if (sec < 3600) return Math.round(sec / 60) + 'm ' + Math.round(sec % 60) + 's';
-    const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
-    return h + 'h ' + m + 'm';
+    if (sec < 3600) return Math.round(sec / 60) + 'm ' + (Math.round(sec % 60)) + 's';
+    return Math.floor(sec/3600) + 'h ' + Math.round((sec%3600)/60) + 'm';
   }
 
-  // ── Upload form ───────────────────────────────────────────────────────────
+  // ── Upload ────────────────────────────────────────────────────────────────
   const input  = document.getElementById('fileInput');
   const btn    = document.getElementById('uploadBtn');
   const nameEl = document.getElementById('fileName');
   const zone   = document.getElementById('dropZone');
 
   function setFile(file) {
-    nameEl.textContent = '✔ Selected: ' + file.name;
+    nameEl.textContent = '✔ ' + file.name;
     nameEl.style.display = 'block';
     btn.disabled = false;
   }
 
   input.addEventListener('change', () => { if (input.files[0]) setFile(input.files[0]); });
-
   zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
   zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
   zone.addEventListener('drop', e => {
@@ -846,8 +963,7 @@ ADMIN_HTML = r"""<!DOCTYPE html>
     const file = e.dataTransfer.files[0];
     if (file && file.name.endsWith('.xlsx')) {
       const dt = new DataTransfer(); dt.items.add(file);
-      input.files = dt.files;
-      setFile(file);
+      input.files = dt.files; setFile(file);
     }
   });
 
@@ -856,18 +972,15 @@ ADMIN_HTML = r"""<!DOCTYPE html>
     const resultEl = document.getElementById('result');
     resultEl.style.display = 'none';
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Processing...';
-
+    btn.innerHTML = '<span class="spinner"></span>Processing&hellip;';
     const fd = new FormData();
     fd.append('file', input.files[0]);
-
     try {
-      const r = await fetch('/upload', { method: 'POST', body: fd, headers: authHeaders() });
-      const d = await r.json();
+      const d = await fetch('/upload', { method: 'POST', body: fd, headers: authHeaders() }).then(r => r.json());
       resultEl.style.display = 'block';
       if (d.success) {
         resultEl.className = 'result success';
-        let html = `<div class="result-title">✔ Data updated — ${d.people_count} contributor(s) found</div>`;
+        let html = `<div class="result-title">✔ Data updated &mdash; ${d.people_count} contributor(s) found</div>`;
         if (d.people && d.people.length) {
           html += '<table class="preview-table"><thead><tr><th>Name</th><th>Points</th><th>Bonus</th><th>Sessions</th></tr></thead><tbody>';
           d.people.forEach(p => {
@@ -879,28 +992,22 @@ ADMIN_HTML = r"""<!DOCTYPE html>
         loadStats();
       } else {
         resultEl.className = 'result error';
-        resultEl.innerHTML = `<div class="result-title">Upload Failed</div>${d.error ?? 'An unknown error occurred.'}`;
+        resultEl.innerHTML = `<div class="result-title">Upload Failed</div>${d.error ?? 'Unknown error.'}`;
       }
     } catch(err) {
       resultEl.style.display = 'block';
       resultEl.className = 'result error';
       resultEl.innerHTML = `<div class="result-title">Network Error</div>${err.message}`;
     }
-
-    btn.innerHTML = 'Upload and Regenerate Data';
+    btn.innerHTML = 'Upload &amp; Regenerate Data';
     btn.disabled = false;
   });
 
   // ── Init ──────────────────────────────────────────────────────────────────
-  function loadAll() {
-    loadStats();
-    loadAdmins();
-    loadKeyPool();
-  }
+  function loadAll() { loadStats(); loadAdmins(); loadKeyPool(); }
 
   checkAuth().then(() => {
-    const overlay = document.getElementById('loginOverlay');
-    if (overlay.style.display !== 'flex') loadAll();
+    if (document.getElementById('loginOverlay').style.display !== 'flex') loadAll();
   });
 
   setInterval(loadKeyPool, 30000);
