@@ -19,6 +19,7 @@ Config (checked in order):
 
 from __future__ import annotations
 
+import asyncio
 import os
 import re
 import time
@@ -28,6 +29,7 @@ from enum import Enum
 from typing import List, Optional, Tuple
 
 import google.genai as genai
+from google.genai import errors as genai_errors
 
 
 class KeyState(Enum):
@@ -213,6 +215,74 @@ class GeminiKeyPool:
                 entry["available_in_seconds"] = max(0.0, round(k.cooldown_until - now, 1))
             result.append(entry)
         return result
+
+    async def validate_all_keys(self) -> List[dict]:
+        """
+        Probe each key against the Gemini API with a minimal request.
+
+        validation_status values:
+          valid        — API accepted the request
+          exhausted    — 429 daily quota exceeded
+          rate_limited — 429 per-minute limit
+          invalid      — 401/403 or key rejected by API
+          server_error — 5xx API error
+        """
+        results = []
+        for i, k in enumerate(self._keys):
+            preview = (k.key[:6] + "..." + k.key[-4:]) if len(k.key) > 10 else "***"
+            vstatus = "unknown"
+            detail  = ""
+            try:
+                test_client = genai.Client(api_key=k.key)
+                await asyncio.to_thread(
+                    test_client.models.generate_content,
+                    model="gemini-2.0-flash",
+                    contents="hi",
+                    config={"max_output_tokens": 5},
+                )
+                vstatus = "valid"
+            except genai_errors.ClientError as e:
+                err = str(e)
+                if "429" in err or "RESOURCE_EXHAUSTED" in err:
+                    if "PerDay" in err or "per_day" in err.lower() or "daily" in err.lower():
+                        vstatus = "exhausted"
+                        detail  = "Daily quota exceeded"
+                    else:
+                        vstatus = "rate_limited"
+                        detail  = "Per-minute limit hit"
+                elif any(x in err for x in ("401", "403", "API_KEY_INVALID", "PERMISSION_DENIED")):
+                    vstatus = "invalid"
+                    detail  = "Key rejected by API"
+                else:
+                    vstatus = "invalid"
+                    detail  = err[:120]
+            except genai_errors.ServerError as e:
+                vstatus = "server_error"
+                detail  = str(e)[:120]
+            except Exception as e:
+                err = str(e)
+                if "429" in err or "RESOURCE_EXHAUSTED" in err:
+                    vstatus = "exhausted" if ("PerDay" in err or "daily" in err.lower()) else "rate_limited"
+                    detail  = "Quota/rate limit"
+                elif any(x in err for x in ("401", "403", "API_KEY_INVALID")):
+                    vstatus = "invalid"
+                    detail  = "Key rejected"
+                elif any(x in err for x in ("500", "502", "503", "UNAVAILABLE")):
+                    vstatus = "server_error"
+                    detail  = err[:120]
+                else:
+                    vstatus = "invalid"
+                    detail  = err[:120]
+
+            results.append({
+                "key_index":          i + 1,
+                "key_preview":        preview,
+                "runtime_state":      k.state.value,
+                "fail_count":         k.fail_count,
+                "validation_status":  vstatus,
+                "detail":             detail,
+            })
+        return results
 
 
 # ---------------------------------------------------------------------------

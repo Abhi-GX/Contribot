@@ -357,10 +357,15 @@ ADMIN_HTML = r"""<!DOCTYPE html>
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-    .badge-active    { background: #e6f4ec; color: #1a6b3a; border: 1px solid #9dd4b2; }
-    .badge-cooling   { background: #fff8e6; color: #7a5c00; border: 1px solid #f0c96a; }
-    .badge-exhausted { background: #fef0f0; color: #8b2020; border: 1px solid #e8a5a5; }
-    .pool-refresh    { font-size: 0.7rem; color: #8896b3; margin-top: 0.5rem; text-align: right; }
+    .badge-active       { background: #e6f4ec; color: #1a6b3a; border: 1px solid #9dd4b2; }
+    .badge-cooling      { background: #fff8e6; color: #7a5c00; border: 1px solid #f0c96a; }
+    .badge-exhausted    { background: #fef0f0; color: #8b2020; border: 1px solid #e8a5a5; }
+    .badge-valid        { background: #e6f4ec; color: #1a6b3a; border: 1px solid #9dd4b2; }
+    .badge-invalid      { background: #fef0f0; color: #8b2020; border: 1px solid #e8a5a5; }
+    .badge-rate-limited { background: #fff8e6; color: #7a5c00; border: 1px solid #f0c96a; }
+    .badge-server-error { background: #f0f0ff; color: #3a2080; border: 1px solid #a5a5e8; }
+    .badge-validating   { background: #f5f7fb; color: #3a4d78; border: 1px solid #d0d8e8; }
+    .pool-refresh       { font-size: 0.7rem; color: #8896b3; margin-top: 0.5rem; text-align: right; }
 
     /* ── Spinner ── */
     .spinner {
@@ -498,7 +503,12 @@ ADMIN_HTML = r"""<!DOCTYPE html>
 
   <!-- API Key pool -->
   <div class="panel full-width">
-    <div class="panel-header"><span>🔑</span><h2>API Key Pool Status</h2></div>
+    <div class="panel-header" style="justify-content:space-between;align-items:center;">
+      <div style="display:flex;align-items:center;gap:0.5rem;"><span>🔑</span><h2>API Key Pool Status</h2></div>
+      <button class="btn-primary" id="validateBtn"
+              style="font-size:0.78rem;padding:0.3rem 0.9rem;margin:0;"
+              onclick="validateKeys()">Validate All Keys</button>
+    </div>
     <div class="panel-body">
       <table class="key-table">
         <thead>
@@ -507,10 +517,11 @@ ADMIN_HTML = r"""<!DOCTYPE html>
             <th>State</th>
             <th>Failures</th>
             <th>Available In</th>
+            <th>Live Check</th>
           </tr>
         </thead>
         <tbody id="keyPoolBody">
-          <tr><td colspan="4" style="color:#8896b3;font-size:0.8rem;">Loading...</td></tr>
+          <tr><td colspan="5" style="color:#8896b3;font-size:0.8rem;">Loading...</td></tr>
         </tbody>
       </table>
       <p class="pool-refresh" id="poolRefreshTime"></p>
@@ -655,31 +666,76 @@ ADMIN_HTML = r"""<!DOCTYPE html>
   }
 
   // ── Key pool ──────────────────────────────────────────────────────────────
+  // Stores the last validation results by key_index so loadKeyPool() can
+  // preserve them across the 30s auto-refresh.
+  let _lastValidation = {};
+
   async function loadKeyPool() {
     try {
       const r = await fetch('/api/keys/status', { headers: authHeaders() });
       const d = await r.json();
       const tbody = document.getElementById('keyPoolBody');
       if (!d.keys || !d.keys.length) {
-        tbody.innerHTML = '<tr><td colspan="4" style="color:#8896b3">No key pool configured</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="color:#8896b3">No key pool configured</td></tr>';
         return;
       }
       tbody.innerHTML = d.keys.map(k => {
-        const cls = k.state === 'active' ? 'badge-active'
-                  : k.state === 'cooling' ? 'badge-cooling' : 'badge-exhausted';
+        const cls   = k.state === 'active' ? 'badge-active'
+                    : k.state === 'cooling' ? 'badge-cooling' : 'badge-exhausted';
         const avail = k.available_in_seconds != null ? fmtDur(k.available_in_seconds) : '—';
+        const vr    = _lastValidation[k.key_index];
+        const liveCell = vr
+          ? `<span class="badge badge-${vr.vstatus.replace('_','-')}" title="${vr.detail || ''}">${vr.vstatus.replace('_',' ')}</span>`
+          : '<span style="color:#8896b3;font-size:0.75rem;">—</span>';
         return `<tr>
           <td><strong>Key ${k.key_index}</strong></td>
           <td><span class="badge ${cls}">${k.state}</span></td>
           <td>${k.fail_count}</td>
           <td>${avail}</td>
+          <td>${liveCell}</td>
         </tr>`;
       }).join('');
       document.getElementById('poolRefreshTime').textContent =
         'Last refreshed: ' + new Date().toLocaleTimeString('en-US');
     } catch(e) {
       document.getElementById('keyPoolBody').innerHTML =
-        '<tr><td colspan="4" style="color:#8896b3">Could not load pool status</td></tr>';
+        '<tr><td colspan="5" style="color:#8896b3">Could not load pool status</td></tr>';
+    }
+  }
+
+  async function validateKeys() {
+    const btn = document.getElementById('validateBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Validating...';
+    _lastValidation = {};
+    // Show "checking..." for every row while waiting
+    document.querySelectorAll('#keyPoolBody tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      if (cells.length >= 5)
+        cells[4].innerHTML = '<span class="badge badge-validating">checking</span>';
+    });
+    try {
+      const r = await fetch('/api/keys/validate', {
+        method: 'POST', headers: authHeaders()
+      });
+      const d = await r.json();
+      if (!d.keys) throw new Error(d.error || 'Validation failed');
+      d.keys.forEach(k => {
+        _lastValidation[k.key_index] = {
+          vstatus: k.validation_status,
+          detail:  k.detail || '',
+          preview: k.key_preview || '',
+        };
+      });
+      await loadKeyPool();
+      document.getElementById('poolRefreshTime').textContent =
+        'Validated at ' + new Date().toLocaleTimeString('en-US');
+    } catch(e) {
+      document.getElementById('poolRefreshTime').textContent =
+        'Validation error: ' + e.message;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Validate All Keys';
     }
   }
 
@@ -1045,6 +1101,17 @@ async def route_keys_status(req: Request) -> Response:
         return json_response({"error": str(e)}, status=500)
 
 
+async def route_keys_validate(req: Request) -> Response:
+    if not _check_admin_auth(req):
+        return json_response({"error": "Unauthorized"}, status=401)
+    from agent.key_pool import get_pool
+    try:
+        results = await get_pool().validate_all_keys()
+        return json_response({"keys": results})
+    except Exception as e:
+        return json_response({"error": str(e)}, status=500)
+
+
 async def route_health(req: Request) -> Response:
     people_count = 0
     if CSV_OUT.exists():
@@ -1073,6 +1140,7 @@ app.router.add_post("/api/admin/add",       route_admin_add)
 app.router.add_post("/api/admin/remove",    route_admin_remove)
 app.router.add_post("/api/messages",        route_messages)
 app.router.add_get ("/api/keys/status",     route_keys_status)
+app.router.add_post("/api/keys/validate",   route_keys_validate)
 app.router.add_get ("/api/health",          route_health)
 
 if __name__ == "__main__":

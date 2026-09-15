@@ -24,6 +24,7 @@ from typing import List, Dict, Tuple, Optional
 
 import google.genai as genai
 from google.genai import types
+from google.genai import errors as genai_errors
 
 from .tools import (
     get_contribution,
@@ -376,7 +377,15 @@ def _build_system_prompt(
 # Pool-aware generate call
 # ---------------------------------------------------------------------------
 async def _call_with_pool(pool, model: str, contents, config) -> types.GenerateContentResponse:
-    """Call generate_content with automatic key rotation on 429 and retry on 503."""
+    """
+    Call generate_content with automatic key rotation on 429 and retry on 5xx.
+
+    Error strategy:
+      ClientError 429 / RESOURCE_EXHAUSTED → mark key cooling/exhausted, rotate immediately
+      ServerError 5xx / transient           → retry same key up to 3 times with backoff,
+                                              then rotate to next key
+      ClientError 4xx (bad request, etc.)  → raise immediately (caller bug, not key issue)
+    """
     client, key_idx = pool.get_active_client()
 
     for _rotation in range(len(pool._keys) + 1):
@@ -387,12 +396,32 @@ async def _call_with_pool(pool, model: str, contents, config) -> types.GenerateC
                     contents=contents,
                     config=config,
                 )
+            except genai_errors.ClientError as e:
+                err = str(e)
+                if "429" in err or "RESOURCE_EXHAUSTED" in err:
+                    client, key_idx = pool.report_429(key_idx, err)
+                    break  # go to next rotation
+                raise  # 400 bad-request etc. — not a key issue, raise immediately
+
+            except genai_errors.ServerError as e:
+                # 500 / 502 / 503 from Gemini backend — transient, retry with backoff
+                if attempt < 2:
+                    wait = 2 ** attempt  # 1s, 2s
+                    print(f"[agent] Server error key {key_idx+1} attempt {attempt+1}, retry in {wait}s: {str(e)[:120]}", flush=True)
+                    await asyncio.sleep(wait)
+                    continue
+                # 3 attempts failed on this key — rotate to next
+                print(f"[agent] Server error persists on key {key_idx+1} after 3 attempts, rotating.", flush=True)
+                client, key_idx = pool.report_429(key_idx, str(e))
+                break
+
             except Exception as e:
+                # Fallback for SDK versions that don't raise typed errors
                 err = str(e)
                 if "429" in err or "RESOURCE_EXHAUSTED" in err:
                     client, key_idx = pool.report_429(key_idx, err)
                     break
-                if ("503" in err or "UNAVAILABLE" in err) and attempt < 2:
+                if ("500" in err or "503" in err or "502" in err or "UNAVAILABLE" in err) and attempt < 2:
                     await asyncio.sleep(2 ** attempt)
                     continue
                 raise
@@ -470,12 +499,26 @@ async def run_agent_async(
     max_iterations = 5
 
     try:
-        for _ in range(max_iterations):
+        for iteration in range(max_iterations):
             response = await _call_with_pool(pool, MODEL, contents, config)
 
-            candidate = response.candidates[0]
-            parts = candidate.content.parts
+            # Guard: empty candidates means blocked/safety-filtered response
+            if not response.candidates:
+                finish = getattr(response, "prompt_feedback", None)
+                print(f"[agent] iter={iteration} empty candidates, feedback={finish}", flush=True)
+                final_reply = "I couldn't process that request. Please try rephrasing."
+                break
 
+            candidate = response.candidates[0]
+
+            # Guard: content can be None when finish_reason is SAFETY / RECITATION
+            if candidate.content is None:
+                finish = getattr(candidate, "finish_reason", "unknown")
+                print(f"[agent] iter={iteration} candidate.content=None finish_reason={finish}", flush=True)
+                final_reply = "I couldn't process that request. Please try rephrasing."
+                break
+
+            parts = candidate.content.parts or []
             tool_calls = [p for p in parts if p.function_call is not None]
 
             if not tool_calls:
@@ -490,7 +533,12 @@ async def run_agent_async(
             for part in tool_calls:
                 fn_name = part.function_call.name
                 fn_args = dict(part.function_call.args) if part.function_call.args else {}
-                result  = _TOOLS[fn_name](**fn_args) if fn_name in _TOOLS else {"error": f"Unknown tool: {fn_name}"}
+                print(f"[agent] iter={iteration} tool={fn_name} args={fn_args}", flush=True)
+                try:
+                    result = _TOOLS[fn_name](**fn_args) if fn_name in _TOOLS else {"error": f"Unknown tool: {fn_name}"}
+                except Exception as tool_err:
+                    print(f"[agent] tool={fn_name} raised: {tool_err}", flush=True)
+                    result = {"error": str(tool_err)}
                 tool_results.append(types.Part(
                     function_response=types.FunctionResponse(
                         name=fn_name,
@@ -506,6 +554,9 @@ async def run_agent_async(
             "I'm temporarily unavailable — the AI quota is exhausted for all configured keys. "
             "Please try again after midnight Pacific Time."
         )
+    except Exception as e:
+        print(f"[agent] Unexpected error in agent loop: {type(e).__name__}: {e}", flush=True)
+        raise  # let app.py log the traceback; don't swallow unexpected errors silently
 
     if not final_reply:
         final_reply = "I'm sorry, I couldn't generate a response. Please try again."
