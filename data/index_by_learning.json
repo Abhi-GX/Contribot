@@ -1,0 +1,966 @@
+{
+  "[Specialization] Business Analysis. Microlearning Interns April 1st 2026": [
+    {
+      "name": "Abhishek Dutta",
+      "email": "abhishek_dutta@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Abhishek Garg",
+      "email": "abhishek_garg@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 1
+    },
+    {
+      "name": "Archi S",
+      "email": "archi_s@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 1
+    },
+    {
+      "name": "Aruna Kumari Boddeti",
+      "email": "arunakumari_boddeti@epam.com",
+      "eligible_points": 6.25,
+      "session_count": 1
+    },
+    {
+      "name": "Jyoti Sharma",
+      "email": "jyoti_sharma@epam.com",
+      "eligible_points": 4.5,
+      "session_count": 1
+    },
+    {
+      "name": "Kajol Mishra",
+      "email": "kajol_mishra@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Malar Priya Murugesan",
+      "email": "malarpriya_murugesan@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Poosa Ramesh",
+      "email": "poosa_ramesh@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Pranay Gampa",
+      "email": "pranay_gampa@epam.com",
+      "eligible_points": 54.67,
+      "session_count": 3
+    },
+    {
+      "name": "Ravi Sankar Bhagavathula",
+      "email": "ravisankar_bhagavathula@epam.com",
+      "eligible_points": 7.5,
+      "session_count": 1
+    },
+    {
+      "name": "Sairam Narkedmalli",
+      "email": "sairam_narkedmalli@epam.com",
+      "eligible_points": 100.92,
+      "session_count": 6
+    }
+  ],
+  "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,": [
+    {
+      "name": "Abhishek Dutta",
+      "email": "abhishek_dutta@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Abhishek Garg",
+      "email": "abhishek_garg@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 1
+    },
+    {
+      "name": "Archi S",
+      "email": "archi_s@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 1
+    },
+    {
+      "name": "Aruna Kumari Boddeti",
+      "email": "arunakumari_boddeti@epam.com",
+      "eligible_points": 6.25,
+      "session_count": 1
+    },
+    {
+      "name": "Bhagya Sree Vonguru",
+      "email": "bhagyasree_vonguru@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 6
+    },
+    {
+      "name": "Deepak Ravuri",
+      "email": "deepak_ravuri@epam.com",
+      "eligible_points": 3.0,
+      "session_count": 2
+    },
+    {
+      "name": "Jyoti Sharma",
+      "email": "jyoti_sharma@epam.com",
+      "eligible_points": 4.5,
+      "session_count": 1
+    },
+    {
+      "name": "Kajol Mishra",
+      "email": "kajol_mishra@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Kavya Kudumula",
+      "email": "kavya_kudumula@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 5
+    },
+    {
+      "name": "Malar Priya Murugesan",
+      "email": "malarpriya_murugesan@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Poosa Ramesh",
+      "email": "poosa_ramesh@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Pranay Gampa",
+      "email": "pranay_gampa@epam.com",
+      "eligible_points": 54.67,
+      "session_count": 9
+    },
+    {
+      "name": "Ravi Sankar Bhagavathula",
+      "email": "ravisankar_bhagavathula@epam.com",
+      "eligible_points": 7.5,
+      "session_count": 1
+    },
+    {
+      "name": "Sairam Narkedmalli",
+      "email": "sairam_narkedmalli@epam.com",
+      "eligible_points": 100.92,
+      "session_count": 20
+    }
+  ],
+  "[Specialization] Business Analysis. Microlearning RD April 27th 2026": [
+    {
+      "name": "Abhishek Garg",
+      "email": "abhishek_garg@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 1
+    },
+    {
+      "name": "Archi S",
+      "email": "archi_s@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 2
+    },
+    {
+      "name": "Aruna Kumari Boddeti",
+      "email": "arunakumari_boddeti@epam.com",
+      "eligible_points": 6.25,
+      "session_count": 2
+    },
+    {
+      "name": "Bhagya Sree Vonguru",
+      "email": "bhagyasree_vonguru@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 5
+    },
+    {
+      "name": "Deepak Ravuri",
+      "email": "deepak_ravuri@epam.com",
+      "eligible_points": 3.0,
+      "session_count": 1
+    },
+    {
+      "name": "Hema Singh",
+      "email": "hema_singh@epam.com",
+      "eligible_points": 1.0,
+      "session_count": 1
+    },
+    {
+      "name": "Jyoti Sharma",
+      "email": "jyoti_sharma@epam.com",
+      "eligible_points": 4.5,
+      "session_count": 1
+    },
+    {
+      "name": "Kavya Kudumula",
+      "email": "kavya_kudumula@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 2
+    },
+    {
+      "name": "Meetu Sharma",
+      "email": "meetu_sharma@epam.com",
+      "eligible_points": 16.0,
+      "session_count": 4
+    },
+    {
+      "name": "Nalini Pratapchandran",
+      "email": "nalini_pratapchandran@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 1
+    },
+    {
+      "name": "Pranay Gampa",
+      "email": "pranay_gampa@epam.com",
+      "eligible_points": 54.67,
+      "session_count": 20
+    },
+    {
+      "name": "Raghu Ram Vallabhapurapu",
+      "email": "raghuram_vallabhapurapu@epam.com",
+      "eligible_points": 3.0,
+      "session_count": 2
+    },
+    {
+      "name": "Ravi Sankar Bhagavathula",
+      "email": "ravisankar_bhagavathula@epam.com",
+      "eligible_points": 7.5,
+      "session_count": 5
+    },
+    {
+      "name": "Ruby Paul",
+      "email": "ruby_paul@epam.com",
+      "eligible_points": 1.0,
+      "session_count": 1
+    },
+    {
+      "name": "Sairam Narkedmalli",
+      "email": "sairam_narkedmalli@epam.com",
+      "eligible_points": 100.92,
+      "session_count": 21
+    }
+  ],
+  "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1": [
+    {
+      "name": "Abhishek Garg",
+      "email": "abhishek_garg@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 1
+    },
+    {
+      "name": "Himanshu Dhingra",
+      "email": "himanshu_dhingra@epam.com",
+      "eligible_points": 1.0,
+      "session_count": 1
+    },
+    {
+      "name": "Mrinal Ghosh",
+      "email": "mrinal_ghosh@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 7
+    },
+    {
+      "name": "Shubham Agarwal5",
+      "email": "shubham_agarwal5@epam.com",
+      "eligible_points": 4.0,
+      "session_count": 4
+    },
+    {
+      "name": "Sidharth Muralidharan",
+      "email": "sidharth_muralidharan@epam.com",
+      "eligible_points": 8.0,
+      "session_count": 8
+    },
+    {
+      "name": "Sneha Agarwal1",
+      "email": "sneha_agarwal1@epam.com",
+      "eligible_points": 8.0,
+      "session_count": 2
+    },
+    {
+      "name": "Venkatasubramanian Cb",
+      "email": "venkatasubramanian_cb@epam.com",
+      "eligible_points": 8.0,
+      "session_count": 8
+    }
+  ],
+  "Java - Explora - December-25 - Campus India": [
+    {
+      "name": "Abhishek Sarkar",
+      "email": "abhishek_sarkar@epam.com",
+      "eligible_points": 60.0,
+      "session_count": 12
+    },
+    {
+      "name": "Gurkiran Kaur",
+      "email": "gurkiran_kaur@epam.com",
+      "eligible_points": 26.0,
+      "session_count": 6
+    },
+    {
+      "name": "Kapil Bhalotia",
+      "email": "kapil_bhalotia@epam.com",
+      "eligible_points": 55.0,
+      "session_count": 11
+    }
+  ],
+  "[Specialization] Automated Testing in Java. Socratic Learning #B02": [
+    {
+      "name": "Ajay Chaware",
+      "email": "ajay_chaware@epam.com",
+      "eligible_points": 9.0,
+      "session_count": 9
+    },
+    {
+      "name": "Debajyoti Mohapatra",
+      "email": "debajyoti_mohapatra@epam.com",
+      "eligible_points": 23.0,
+      "session_count": 1
+    },
+    {
+      "name": "Kranthiveer Tummuri",
+      "email": "kranthiveer_tummuri@epam.com",
+      "eligible_points": 49.0,
+      "session_count": 12
+    },
+    {
+      "name": "Pankaj Gupta2",
+      "email": "pankaj_gupta2@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 5
+    },
+    {
+      "name": "Preeti Talasila",
+      "email": "preeti_talasila@epam.com",
+      "eligible_points": 6.0,
+      "session_count": 6
+    }
+  ],
+  "[Specialization] Java - Explora - JAN'26 - Managed Services": [
+    {
+      "name": "Ajay Kumar5",
+      "email": "ajay_kumar5@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 2
+    },
+    {
+      "name": "Karan Sachdev",
+      "email": "karan_sachdev@epam.com",
+      "eligible_points": 8.0,
+      "session_count": 2
+    },
+    {
+      "name": "Mudassir Rehman",
+      "email": "mudassir_rehman@epam.com",
+      "eligible_points": 28.0,
+      "session_count": 6
+    },
+    {
+      "name": "Narmada Nayunipati",
+      "email": "narmada_nayunipati@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 1
+    },
+    {
+      "name": "Rajat Kumar",
+      "email": "rajat_kumar@epam.com",
+      "eligible_points": 40.0,
+      "session_count": 8
+    },
+    {
+      "name": "Sandeep Kumar Vangara",
+      "email": "sandeepkumar_vangara@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 2
+    },
+    {
+      "name": "Shubham Kumbhar",
+      "email": "shubham_kumbhar@epam.com",
+      "eligible_points": 24.0,
+      "session_count": 6
+    },
+    {
+      "name": "Sonali Kumari1",
+      "email": "sonali_kumari1@epam.com",
+      "eligible_points": 35.0,
+      "session_count": 7
+    },
+    {
+      "name": "Tejaswini Mysoola",
+      "email": "tejaswini_mysoola@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 1
+    }
+  ],
+  "Python RD program - Sept, 25": [
+    {
+      "name": "Ajoy Oommen",
+      "email": "ajoy_oommen@epam.com",
+      "eligible_points": 28.0,
+      "session_count": 3
+    },
+    {
+      "name": "Ashish Shukla",
+      "email": "ash2shukla@gmail.com",
+      "eligible_points": 11.0,
+      "session_count": 2
+    },
+    {
+      "name": "Vivek Keshore",
+      "email": "vivek_keshore@epam.com",
+      "eligible_points": 19.0,
+      "session_count": 3
+    }
+  ],
+  "Python RD program - Batch #10(Automation Testing)": [
+    {
+      "name": "Akshit Singhal",
+      "email": "akshit_singhal@epam.com",
+      "eligible_points": 41.0,
+      "session_count": 6
+    },
+    {
+      "name": "Kamal Bhatia",
+      "email": "kamal_bhatia@epam.com",
+      "eligible_points": 17.0,
+      "session_count": 5
+    },
+    {
+      "name": "Navin Kumar",
+      "email": "navin_kumar@epam.com",
+      "eligible_points": 12.0,
+      "session_count": 4
+    },
+    {
+      "name": "Rajat Singh1",
+      "email": "rajat_singh1@epam.com",
+      "eligible_points": 49.0,
+      "session_count": 6
+    }
+  ],
+  "[Specialization] Java - Explora - JAN'26 - B01": [
+    {
+      "name": "Amit Tripathi",
+      "email": "amit_tripathi@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 1
+    },
+    {
+      "name": "Lathasree Bobburi",
+      "email": "lathasree_bobburi@epam.com",
+      "eligible_points": 16.0,
+      "session_count": 3
+    },
+    {
+      "name": "Nagesh Manda",
+      "email": "nagesh_manda@epam.com",
+      "eligible_points": 30.0,
+      "session_count": 1
+    },
+    {
+      "name": "Samruddhi Kulkarni",
+      "email": "samruddhi_kulkarni@epam.com",
+      "eligible_points": 15.0,
+      "session_count": 3
+    },
+    {
+      "name": "Vaidyanathan Lakshminarayanan",
+      "email": "vaidyanathan_lakshminarayanan@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 1
+    }
+  ],
+  "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01": [
+    {
+      "name": "Amit Tripathi",
+      "email": "amit_tripathi@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 8
+    },
+    {
+      "name": "Lathasree Bobburi",
+      "email": "lathasree_bobburi@epam.com",
+      "eligible_points": 16.0,
+      "session_count": 10
+    },
+    {
+      "name": "Nagesh Manda",
+      "email": "nagesh_manda@epam.com",
+      "eligible_points": 30.0,
+      "session_count": 12
+    },
+    {
+      "name": "Nalini Pratapchandran",
+      "email": "nalini_pratapchandran@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 6
+    },
+    {
+      "name": "Rahul Sharma14",
+      "email": "rahul_sharma14@epam.com",
+      "eligible_points": 8.0,
+      "session_count": 6
+    },
+    {
+      "name": "Rohima Pasupulati",
+      "email": "rohima_pasupulati@epam.com",
+      "eligible_points": 13.0,
+      "session_count": 7
+    },
+    {
+      "name": "Sai Karthik Vankadari",
+      "email": "saikarthik_vankadari@epam.com",
+      "eligible_points": 20.0,
+      "session_count": 11
+    },
+    {
+      "name": "Sricharan Peddinti",
+      "email": "sricharan_peddinti@epam.com",
+      "eligible_points": 12.0,
+      "session_count": 7
+    },
+    {
+      "name": "Sujith Mogallapalli",
+      "email": "sujith_mogallapalli@epam.com",
+      "eligible_points": 6.0,
+      "session_count": 6
+    }
+  ],
+  "[Specialization] Automated Testing in Python. IND": [
+    {
+      "name": "Anil Kosaraju",
+      "email": "anil_kosaraju@epam.com",
+      "eligible_points": 55.0,
+      "session_count": 20
+    }
+  ],
+  "PyIN Campus26 Batch#3": [
+    {
+      "name": "Ankit Kumar kaswan",
+      "email": "ankitkumar_kaswan@epam.com",
+      "eligible_points": 1.0,
+      "session_count": 1
+    }
+  ],
+  "[Beginner] Core Java - The Explora - Nov'25": [
+    {
+      "name": "Anuj Kumar2",
+      "email": "anuj_kumar2@epam.com",
+      "eligible_points": 85.0,
+      "session_count": 19
+    },
+    {
+      "name": "Ashutosh Thorat",
+      "email": "ashutosh_thorat@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 1
+    },
+    {
+      "name": "Dushyant Gupta",
+      "email": "dushyant_gupta@epam.com",
+      "eligible_points": 15.0,
+      "session_count": 3
+    },
+    {
+      "name": "Harshit Agnihotri",
+      "email": "harshit_agnihotri@epam.com",
+      "eligible_points": 30.0,
+      "session_count": 6
+    },
+    {
+      "name": "Krishan Sharma1",
+      "email": "krishan_sharma1@epam.com",
+      "eligible_points": 10.0,
+      "session_count": 2
+    }
+  ],
+  "[Specialization] Business Analysis. Microlearning BA Interns April 27th": [
+    {
+      "name": "Archi S",
+      "email": "archi_s@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 1
+    },
+    {
+      "name": "Aruna Kumari Boddeti",
+      "email": "arunakumari_boddeti@epam.com",
+      "eligible_points": 6.25,
+      "session_count": 1
+    },
+    {
+      "name": "Jyoti Sharma",
+      "email": "jyoti_sharma@epam.com",
+      "eligible_points": 4.5,
+      "session_count": 1
+    },
+    {
+      "name": "Nalini Pratapchandran",
+      "email": "nalini_pratapchandran@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 1
+    },
+    {
+      "name": "Pranay Gampa",
+      "email": "pranay_gampa@epam.com",
+      "eligible_points": 54.67,
+      "session_count": 2
+    },
+    {
+      "name": "Raghu Ram Vallabhapurapu",
+      "email": "raghuram_vallabhapurapu@epam.com",
+      "eligible_points": 3.0,
+      "session_count": 1
+    },
+    {
+      "name": "Sairam Narkedmalli",
+      "email": "sairam_narkedmalli@epam.com",
+      "eligible_points": 100.92,
+      "session_count": 6
+    }
+  ],
+  "[Beginner] Cloud & DevOps IN-05 AWS": [
+    {
+      "name": "Bhagyesh A Machhar",
+      "email": "bhagyesha_machhar@epam.com",
+      "eligible_points": 30.0,
+      "session_count": 6
+    }
+  ],
+  "[Fundamentals] Cloud & DevOps IN-05 AWS": [
+    {
+      "name": "Bhagyesh A Machhar",
+      "email": "bhagyesha_machhar@epam.com",
+      "eligible_points": 30.0,
+      "session_count": 21
+    }
+  ],
+  "[Specialization] DevOps BootCamp: AWS IN-05": [
+    {
+      "name": "Bhagyesh A Machhar",
+      "email": "bhagyesha_machhar@epam.com",
+      "eligible_points": 30.0,
+      "session_count": 3
+    },
+    {
+      "name": "Sivasankar Nagireddy",
+      "email": "sivasankar_nagireddy@epam.com",
+      "eligible_points": 3.0,
+      "session_count": 3
+    }
+  ],
+  "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B02": [
+    {
+      "name": "Chaitanya G",
+      "email": "chaitanya_g@epam.com",
+      "eligible_points": 2.5,
+      "session_count": 2
+    },
+    {
+      "name": "Mohammadhatifraza Khan",
+      "email": "mohammadhatifraza_khan@epam.com",
+      "eligible_points": 4.0,
+      "session_count": 4
+    },
+    {
+      "name": "Rojaramyasri Bobburi",
+      "email": "rojaramyasri_bobburi@epam.com",
+      "eligible_points": 35.0,
+      "session_count": 10
+    },
+    {
+      "name": "Tejaswini Yellayyagari",
+      "email": "tejaswini_yellayyagari@epam.com",
+      "eligible_points": 9.0,
+      "session_count": 9
+    },
+    {
+      "name": "Vandana Shekhar",
+      "email": "vandana_shekhar@epam.com",
+      "eligible_points": 1.0,
+      "session_count": 1
+    },
+    {
+      "name": "Venkatesh Dosakanti",
+      "email": "venkatesh_dosakanti@epam.com",
+      "eligible_points": 4.0,
+      "session_count": 4
+    }
+  ],
+  "[Specialization] Automated testing in Java. Explora - Jan'26 -B02": [
+    {
+      "name": "Debajyoti Mohapatra",
+      "email": "debajyoti_mohapatra@epam.com",
+      "eligible_points": 23.0,
+      "session_count": 13
+    },
+    {
+      "name": "Praveen Eruvanti",
+      "email": "praveen_eruvanti@epam.com",
+      "eligible_points": 62.0,
+      "session_count": 21
+    }
+  ],
+  "[Specialization] Automated testing in Java. Explora .Dec'25": [
+    {
+      "name": "Debajyoti Mukherjee",
+      "email": "debajyoti_mukherjee@epam.com",
+      "eligible_points": 30.0,
+      "session_count": 8
+    },
+    {
+      "name": "Deepak Sharma3",
+      "email": "deepak_sharma3@epam.com",
+      "eligible_points": 43.0,
+      "session_count": 19
+    },
+    {
+      "name": "Kranthiveer Tummuri",
+      "email": "kranthiveer_tummuri@epam.com",
+      "eligible_points": 49.0,
+      "session_count": 19
+    },
+    {
+      "name": "Lekhashree Sathyanarayanan",
+      "email": "lekhashree_sathyanarayanan@epam.com",
+      "eligible_points": 17.0,
+      "session_count": 10
+    },
+    {
+      "name": "Pranay Mudi",
+      "email": "pranay_mudi@epam.com",
+      "eligible_points": 65.0,
+      "session_count": 23
+    },
+    {
+      "name": "Shankul Rai",
+      "email": "shankul_rai@epam.com",
+      "eligible_points": 16.0,
+      "session_count": 12
+    }
+  ],
+  "[Specialization] Automated Testing in Java. Socratic Learning #B01": [
+    {
+      "name": "Dhakshanamoorthy Venkatraman",
+      "email": "dhakshanamoorthy_venkatraman@epam.com",
+      "eligible_points": 9.0,
+      "session_count": 9
+    },
+    {
+      "name": "Kishore K",
+      "email": "kishore_k@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 2
+    },
+    {
+      "name": "Pranay Mudi",
+      "email": "pranay_mudi@epam.com",
+      "eligible_points": 65.0,
+      "session_count": 8
+    }
+  ],
+  "PyIN Campus26 Batch#2 (MS)": [
+    {
+      "name": "Gokul CR",
+      "email": "gokul_cr@epam.com",
+      "eligible_points": 8.0,
+      "session_count": 1
+    },
+    {
+      "name": "Rajat Singh1",
+      "email": "rajat_singh1@epam.com",
+      "eligible_points": 49.0,
+      "session_count": 1
+    },
+    {
+      "name": "Rishab Trivedi",
+      "email": "rishab_trivedi@epam.com",
+      "eligible_points": 8.0,
+      "session_count": 1
+    },
+    {
+      "name": "Saroj Kumar",
+      "email": "saroj_kumar@epam.com",
+      "eligible_points": 8.0,
+      "session_count": 1
+    },
+    {
+      "name": "Sonu Kumar Singh",
+      "email": "sonukumar_singh@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    }
+  ],
+  "[Fundamentals] Data Software Engineering | Sadhaka ON Campus Program 2025": [
+    {
+      "name": "Harsh Arora",
+      "email": "harsh_arora@epam.com",
+      "eligible_points": 3.0,
+      "session_count": 2
+    },
+    {
+      "name": "Manoj T",
+      "email": "manoj_t@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 6
+    }
+  ],
+  "Java - Explora - November-25 - Campus India": [
+    {
+      "name": "Jitesh Ahuja",
+      "email": "jitesh_ahuja@epam.com",
+      "eligible_points": 10.0,
+      "session_count": 2
+    },
+    {
+      "name": "Manuj Sangwan",
+      "email": "manuj_sangwan@epam.com",
+      "eligible_points": 10.0,
+      "session_count": 2
+    }
+  ],
+  "[Specialization] Java - Explora - JAN'26 - B02": [
+    {
+      "name": "Krishnachandra Boyapati",
+      "email": "krishnachandra_boyapati@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 2
+    }
+  ],
+  "[Specialization] JavaScript Full-Stack - Aug Batch - Team 1": [
+    {
+      "name": "Mansi Manhas",
+      "email": "mansi_manhas@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 5
+    },
+    {
+      "name": "Saniddhya Nigam",
+      "email": "saniddhya_nigam@epam.com",
+      "eligible_points": 4.0,
+      "session_count": 4
+    },
+    {
+      "name": "Siddharth Garewal",
+      "email": "siddharth_garewal@epam.com",
+      "eligible_points": 4.0,
+      "session_count": 4
+    }
+  ],
+  "JavaScript fullstack - Jan Batch 01 - 2026": [
+    {
+      "name": "Mrinal Ghosh",
+      "email": "mrinal_ghosh@epam.com",
+      "eligible_points": 11.0,
+      "session_count": 4
+    },
+    {
+      "name": "Saikrishna Tammi",
+      "email": "saikrishna_tammi@epam.com",
+      "eligible_points": 9.0,
+      "session_count": 5
+    }
+  ],
+  "[Specialization] Automated testing in Java. Explora - Jan'26 -B01": [
+    {
+      "name": "Pradip Patra",
+      "email": "pradip_patra@epam.com",
+      "eligible_points": 21.0,
+      "session_count": 7
+    },
+    {
+      "name": "Sriharsha Avanchi",
+      "email": "sriharsha_avanchi@epam.com",
+      "eligible_points": 12.0,
+      "session_count": 4
+    }
+  ],
+  "[Specialization] JavaScript Full-Stack - Jun Batch - Team 2": [
+    {
+      "name": "Prasath K v",
+      "email": "prasath_kv@epam.com",
+      "eligible_points": 9.0,
+      "session_count": 6
+    },
+    {
+      "name": "Praveenmuthukumar Gnanaraj",
+      "email": "praveenmuthukumar_gnanaraj@epam.com",
+      "eligible_points": 4.0,
+      "session_count": 4
+    },
+    {
+      "name": "Saikrishna Tammi",
+      "email": "saikrishna_tammi@epam.com",
+      "eligible_points": 9.0,
+      "session_count": 4
+    },
+    {
+      "name": "Sairam Bomma",
+      "email": "sairam_bomma@epam.com",
+      "eligible_points": 6.0,
+      "session_count": 6
+    },
+    {
+      "name": "Salil Ahuja",
+      "email": "salil_ahuja@epam.com",
+      "eligible_points": 6.0,
+      "session_count": 6
+    },
+    {
+      "name": "Vikas Myadam",
+      "email": "vikas_myadam@epam.com",
+      "eligible_points": 5.0,
+      "session_count": 5
+    }
+  ],
+  "[Specialization] .NET IND MLM Path - Explora_Jan2026_2": [
+    {
+      "name": "Prashuk Jain",
+      "email": "prashuk_jain@epam.com",
+      "eligible_points": 2.0,
+      "session_count": 1
+    },
+    {
+      "name": "Vedvrat Lodhi",
+      "email": "vedvrat_lodhi@epam.com",
+      "eligible_points": 52.0,
+      "session_count": 12
+    }
+  ],
+  "[Specialization] Java - Explora - JAN'26 - B03": [
+    {
+      "name": "Rojaramyasri Bobburi",
+      "email": "rojaramyasri_bobburi@epam.com",
+      "eligible_points": 35.0,
+      "session_count": 6
+    }
+  ],
+  "JavaScript fullstack - Jan batch 02 - 2026": [
+    {
+      "name": "Sahil Shikalgar",
+      "email": "sahil_shikalgar@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 4
+    }
+  ],
+  "[Specialization] JavaScript Full-Stack - Aug Batch - Team 2": [
+    {
+      "name": "Sahil Shikalgar",
+      "email": "sahil_shikalgar@epam.com",
+      "eligible_points": 7.0,
+      "session_count": 3
+    }
+  ],
+  "AT in JS 2026": [
+    {
+      "name": "Vasanth Kalaimani",
+      "email": "vasanth_kalaimani@epam.com",
+      "eligible_points": 20.0,
+      "session_count": 8
+    }
+  ]
+}

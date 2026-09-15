@@ -10,7 +10,7 @@ Architecture: direct Gemini API calls with tool use.
   into the system prompt so Gemini answers in ONE round trip for most queries
 
 Entry points:
-    run_agent_async(user_message, user_email, history, prefetched_context)
+    run_agent_async(user_message, user_email, history, prefetched_context, is_admin)
     run_agent(...)  [sync wrapper]
 """
 
@@ -19,33 +19,46 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+from datetime import date
 from typing import List, Dict, Tuple, Optional
 
 import google.genai as genai
 from google.genai import types
 
-from .tools import get_contribution, get_all_contributors, get_top_contributors
+from .tools import (
+    get_contribution,
+    get_session_details,
+    get_contributions_in_period,
+    query_contributions,
+    get_all_contributors,
+    get_top_contributors,
+)
 from .key_pool import get_pool, AllKeysExhausted
 
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
 
 
 # ---------------------------------------------------------------------------
 # Tool registry
 # ---------------------------------------------------------------------------
 _TOOLS = {
-    "get_contribution":     get_contribution,
-    "get_all_contributors": get_all_contributors,
-    "get_top_contributors": get_top_contributors,
+    "get_contribution":            get_contribution,
+    "get_session_details":         get_session_details,
+    "get_contributions_in_period": get_contributions_in_period,
+    "query_contributions":         query_contributions,
+    "get_all_contributors":        get_all_contributors,
+    "get_top_contributors":        get_top_contributors,
 }
 
 _TOOL_CONFIG = types.Tool(function_declarations=[
     types.FunctionDeclaration(
         name="get_contribution",
         description=(
-            "Look up contribution data for ONE person by EPAM email. "
-            "Returns eligible_points, bonus_usd, row_count, included_statuses. "
-            "Call for personal data questions. Email is already in session context."
+            "Look up contribution summary for ONE person by EPAM email. "
+            "Returns: eligible_points, bonus_usd, row_count, included_statuses, "
+            "learning_categories, learning_paths, programs. "
+            "Use for personal data questions (points, bonus, earnings). "
+            "Email is already in session context — do NOT ask the user."
         ),
         parameters=types.Schema(
             type=types.Type.OBJECT,
@@ -59,10 +72,130 @@ _TOOL_CONFIG = types.Tool(function_declarations=[
         )
     ),
     types.FunctionDeclaration(
+        name="get_session_details",
+        description=(
+            "Get detailed session data for a contributor by EPAM email OR full/partial name. "
+            "Returns all eligible sessions with: learning path name, learning category "
+            "(e.g. JavaScript, Java, .NET), program name, role, block name, activity dates. "
+            "Use this when asked: which learning paths/categories/programs someone contributed to, "
+            "session history, what practices they worked on, mentee details. "
+            "Accepts full name (e.g. 'Saikrishna Tammi') or email."
+        ),
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "email_or_name": types.Schema(
+                    type=types.Type.STRING,
+                    description="EPAM email OR contributor's full or partial name"
+                )
+            },
+            required=["email_or_name"]
+        )
+    ),
+    types.FunctionDeclaration(
+        name="get_contributions_in_period",
+        description=(
+            "Get contribution sessions for a person filtered by date range. "
+            "Use for: 'what did I contribute to last month?', 'my sessions from Jan to March', "
+            "'contributions between 2026-01-01 and 2026-06-30', "
+            "'how many points did I earn in Q1?', 'learning paths I worked on this year'. "
+            "Dates MUST be YYYY-MM-DD. Derive relative dates (last month, this year, Q1) "
+            "from today's date in the system prompt. "
+            "Email is already in session context — do NOT ask the user."
+        ),
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "email_or_name": types.Schema(
+                    type=types.Type.STRING,
+                    description="EPAM email OR contributor's full or partial name"
+                ),
+                "start_date": types.Schema(
+                    type=types.Type.STRING,
+                    description="Start date YYYY-MM-DD (inclusive). Empty = no lower bound."
+                ),
+                "end_date": types.Schema(
+                    type=types.Type.STRING,
+                    description="End date YYYY-MM-DD (inclusive). Empty = no upper bound."
+                ),
+            },
+            required=["email_or_name"]
+        )
+    ),
+    types.FunctionDeclaration(
+        name="query_contributions",
+        description=(
+            "PRIMARY generic query tool — filter one person's sessions by ANY combination of fields. "
+            "Use for any query mentioning category, path, program, role, status, dates, or any mix. "
+            "IMPORTANT: use group_by whenever the user asks for a breakdown, summary, or 'how much per X' — "
+            "it returns aggregated rows instead of raw sessions, keeping the response tiny. "
+            "Examples: "
+            "'Java contributions last two months' → learning_category='java', start_date=..., end_date=...; "
+            "'points by learning category' → group_by='learning_category'; "
+            "'sessions per month this year' → start_date='YYYY-01-01', group_by='month'; "
+            "'approved sessions in Explora' → program='explora', status='approved'; "
+            "'breakdown of my contributions' → group_by='learning_category' or group_by='role'. "
+            "All text filters are partial, case-insensitive. Derive dates from today. "
+            "Email is already in session context."
+        ),
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "email_or_name": types.Schema(
+                    type=types.Type.STRING,
+                    description="EPAM email OR full or partial name"
+                ),
+                "learning_category": types.Schema(
+                    type=types.Type.STRING,
+                    description="Partial match on category, e.g. 'java', 'javascript', '.net', 'business analysis'"
+                ),
+                "learning_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Partial match on learning path name, e.g. 'fullstack', 'jan batch', 'microlearning'"
+                ),
+                "program": types.Schema(
+                    type=types.Type.STRING,
+                    description="Partial match on program name, e.g. 'explora', 'specialization', 'campus'"
+                ),
+                "role": types.Schema(
+                    type=types.Type.STRING,
+                    description="Partial match on role: 'mentor', 'reviewer', 'coordinator', 'trainer'"
+                ),
+                "status": types.Schema(
+                    type=types.Type.STRING,
+                    description="Contribution status: 'approved', 'submitted'"
+                ),
+                "learning_status": types.Schema(
+                    type=types.Type.STRING,
+                    description="Learning delivery status: 'delivered', 'inprogress', 'draft', 'archived'"
+                ),
+                "start_date": types.Schema(
+                    type=types.Type.STRING,
+                    description="Start date YYYY-MM-DD (inclusive)"
+                ),
+                "end_date": types.Schema(
+                    type=types.Type.STRING,
+                    description="End date YYYY-MM-DD (inclusive)"
+                ),
+                "group_by": types.Schema(
+                    type=types.Type.STRING,
+                    description=(
+                        "Aggregate sessions by this dimension instead of returning raw list. "
+                        "Values: 'learning_category', 'learning_path', 'program', 'role', "
+                        "'status', 'learning_status', 'month', 'year'. "
+                        "Each group returns: {group, session_count, points, bonus_usd, total_mentees, total_duration_min}. "
+                        "Use this for any breakdown/summary question to avoid sending raw sessions."
+                    )
+                ),
+            },
+            required=["email_or_name"]
+        )
+    ),
+    types.FunctionDeclaration(
         name="get_all_contributors",
         description=(
             "Return ALL contributors with eligible data. "
-            "Use for 'list everyone', 'how many people have points', 'total program stats'."
+            "ADMIN ONLY. Use for: 'list everyone', 'how many people', 'total program stats'."
         ),
         parameters=types.Schema(type=types.Type.OBJECT, properties={})
     ),
@@ -70,7 +203,7 @@ _TOOL_CONFIG = types.Tool(function_declarations=[
         name="get_top_contributors",
         description=(
             "Return top N contributors ranked by eligible points (highest first). "
-            "Use for 'who has the most points', 'leaderboard', 'top contributors'."
+            "ADMIN ONLY. Use for: 'who has the most points', 'leaderboard', 'top contributors'."
         ),
         parameters=types.Schema(
             type=types.Type.OBJECT,
@@ -87,69 +220,163 @@ _TOOL_CONFIG = types.Tool(function_declarations=[
 # ---------------------------------------------------------------------------
 # System prompt
 # ---------------------------------------------------------------------------
-_BASE_SYSTEM_PROMPT = """You are the Campus Junior Training Contribution Bot for EPAM Systems.
-You help Mentors, SMEs, Scrum Masters, and Product Owners check their eligible
-contribution points and bonus amount.
+_BASE_SYSTEM_PROMPT = """You are Kitrak Campus — Contribution Assistant for EPAM Systems.
+You help contributors (Mentors, SMEs, Scrum Masters, Product Owners) in the Campus Junior
+Training program check their contribution points, bonus, and learning activity history.
 
-== PROGRAM RULES (answer these questions directly — no tool call needed) ==
-Program:          EPAM Campus Junior Training
-Eligible roles:   Mentor, SME, Scrum Master, Product Owner
-Eligible format:  "Group Meeting with contributor" sessions ONLY
+== ORGANISATION CONTEXT ==
+EPAM runs a Campus Junior Training program that trains new junior employees.
+Contributors support these juniors by:
+  - Mentoring them in technical disciplines (JavaScript, Java, .NET, Python, etc.)
+  - Running "Group Meeting with contributor" training sessions
+  - Contributing to Learning Paths across one or more technology categories
+
+The data is organised as:
+  Learning Category  — technology/discipline area (e.g. "JavaScript", "Java", "Python")
+  Learning Path      — specific training program (e.g. "JavaScript fullstack - Jan Batch 01 - 2026")
+  Program Name       — umbrella program containing multiple learning paths
+                       (e.g. "[Explora][Master] JavaScript fullstack - Campus India")
+
+Contributors typically serve a specific practice or multiple practices. Their sessions
+are linked to a Learning Path and Category — so you can answer questions like
+"what learning paths did I contribute to?" or "which categories did I work in?".
+
+== PROGRAM RULES ==
+Program:           EPAM Campus Junior Training
+Eligible roles:    Mentor, SME, Scrum Master, Product Owner
+Eligible format:   "Group Meeting with contributor" sessions ONLY
 Eligible statuses: Submitted, Approved
-  (Not Eligible, Rejected, Draft, Individual do NOT count)
-Point value:      $15 per eligible point
-Bonus formula:    bonus_usd = eligible_points × $15
-Points source:    Verified Points if available, otherwise Submitted Points
-Data freshness:   Refreshed from Learn export on each admin upload. Recent sessions may lag.
+Point value:       $15 per eligible point
+Bonus formula:     bonus_usd = eligible_points × $15
+Points source:     Verified Points if available, otherwise Submitted Points
+Data freshness:    Refreshed from Learn export on each admin upload. Recent sessions may lag.
 
-== DATA SCHEMA (per person in the dataset) ==
-  email              — EPAM email address (unique key)
-  name               — Full name
-  eligible_points    — Total points from eligible sessions
-  bonus_usd          — eligible_points × $15
-  row_count          — Number of eligible sessions counted
-  included_statuses  — Breakdown e.g. "6 approved / 9 submitted"
+== DATA SCHEMA (summary — from get_contribution) ==
+  email                — EPAM email address (unique key)
+  name                 — Full name
+  eligible_points      — Total points from eligible sessions
+  bonus_usd            — eligible_points × $15
+  row_count            — Number of eligible sessions counted
+  included_statuses    — e.g. "12 submitted"
+  learning_categories  — Technology areas contributed to
+  learning_paths       — Learning path names contributed to
+  programs             — Umbrella program names
+  total_mentees        — Total mentees across all sessions
+  total_duration_min   — Total session time in minutes
 
-== TOOLS (call only when needed) ==
-- get_contribution(email): personal data for ONE person (use pre-fetched data first)
-- get_all_contributors():  full list — use for aggregate stats, "list everyone"
-- get_top_contributors(n): top N by points — use for leaderboard queries
+== DATA SCHEMA (per-session — from get_session_details / query_contributions) ==
+  learning          — Learning path/activity name
+  learning_category — Technology category (JavaScript, Java, Business Analysis, etc.)
+  program_name      — Umbrella program name
+  role              — Mentor | Reviewer | Coordinator | Trainer
+  block_name        — Session block/topic name
+  status            — submitted | approved
+  learning_status   — Delivered | InProgress | Draft | Archived
+  points            — Points earned for that session
+  total_mentees     — Number of mentees in that session
+  duration_min      — Session duration in minutes
+  activity_start    — Session start date (YYYY-MM-DD)
+  activity_end      — Session end date (YYYY-MM-DD)
+
+== TOOLS ==
+- get_contribution(email)                      — Points/bonus summary. Use pre-fetched data first.
+- get_session_details(email_or_name)           — All sessions, no filtering. Use when no filters mentioned.
+- query_contributions(email_or_name, ...)      — PRIMARY tool for any filtered query. Accepts: learning_category, learning_path, program, role, status, start_date, end_date — any combination. All text filters are partial/case-insensitive. USE THIS for any query mixing filters.
+- get_contributions_in_period(email_or_name, start_date, end_date) — Date-only shortcut. Use only when the query is purely date-based with no other filters.
+- get_all_contributors()                       — All contributors — ADMIN ONLY
+- get_top_contributors(n)                      — Top N by points — ADMIN ONLY
+
+== TOOL SELECTION GUIDE ==
+  Any filter OR breakdown OR summary query         → query_contributions (use group_by for breakdowns)
+  "show all my sessions / full history"            → get_session_details
+  "my points / bonus / summary"                    → pre-fetch or get_contribution
+  Date range only, no other filters                → get_contributions_in_period
+
+== DATE HANDLING ==
+Today: {today}
+Derive absolute YYYY-MM-DD dates from relative phrases before calling tools:
+  "last month"        → first day ... last day of the month before today
+  "this month"        → first day of this month ... today
+  "this year"         → YYYY-01-01 ... today
+  "Q1 2026"           → 2026-01-01 ... 2026-03-31
+  "last 3 months"     → today minus 90 days ... today
+  "last two months"   → today minus 60 days ... today
+  "from Jan to March" → infer the most recent Jan 1 ... March 31
+Never ask the user to provide dates — compute them yourself.
+
+== CLARIFICATION RULES ==
+Ask ONE focused question before calling a tool when the query is genuinely ambiguous or incomplete:
+  - "Java" could mean learning_category OR learning_path — if unclear, ask "Do you mean the Java category or a specific Java learning path?"
+  - "last year" is fine to compute; "few months ago" is vague — ask for the timeframe
+  - If a query could apply to multiple people and the user isn't an admin, confirm whose data they want
+  - Only ask if it will materially change the result. If you can make a reasonable inference, do it and state your assumption in the reply.
+  - Never ask more than one question at a time. Never ask for email.
+
+== GROUP_BY USAGE ==
+  Use group_by whenever the user wants a breakdown, comparison, or "how much per X":
+    "breakdown by category"     → group_by="learning_category"
+    "how many sessions per month" → group_by="month"
+    "points by role"             → group_by="role"
+    "sessions this year by path" → start_date="YYYY-01-01", group_by="learning_path"
+  When group_by is used the response will have "groups" not "sessions" — each group has:
+    {group, session_count, points, bonus_usd, total_mentees, total_duration_min}
+  Present this as a table or bullet list, sorted by points (already sorted by the tool).
 
 == RESPONSE RULES ==
 - Be friendly, concise, and professional
 - Address the user by name when known
 - NEVER ask the user for their email — it is already in session context
+- For any filtered query (category, path, program, role, status, dates, or any combo) → use query_contributions
+- For breakdown/summary questions → use query_contributions with group_by
+- For "my points / bonus / summary" → use pre-fetched data or get_contribution
+- When showing duration, convert minutes to hours (e.g. 120 min = 2 hrs)
 - Remember context from earlier in this conversation for follow-up questions
-- Keep replies short and focused
+- Keep replies short and focused; use bullet points or tables for structured data
 
 Format for personal contribution results:
   Hi [Name]! Here's your Campus Junior Training summary:
   • Eligible points: [X]
   • Sessions counted: [N] ([breakdown])
   • Bonus at $15/point: $[amount]
+  • Learning categories: [list]
+  • Learning paths: [list]
   Data reflects the latest export. Recent sessions may not appear yet."""
 
+_ADMIN_AUTH = """\n\n== AUTHORIZATION ==
+This user IS an administrator. They can view any contributor's data and ask
+aggregate questions (top contributors, full list, program stats, etc.).
+All tools are available."""
 
-def _build_system_prompt(prefetched_context: Optional[dict]) -> str:
-    if not prefetched_context:
-        return _BASE_SYSTEM_PROMPT
-    return (
-        _BASE_SYSTEM_PROMPT
-        + f"\n\n[PRE-FETCHED: User's contribution data is already loaded — "
-        f"use it directly without calling get_contribution unless the user asks about someone else]\n"
-        + json.dumps(prefetched_context, indent=2)
-    )
+_USER_AUTH_TEMPLATE = """\n\n== AUTHORIZATION ==
+This user is a regular contributor (NOT an admin).
+You MUST ONLY answer questions about their own data (email: {email}).
+- If asked about someone else's contributions → politely refuse; say only their own data is visible.
+- Do NOT call get_all_contributors or get_top_contributors for non-admin users.
+- For get_session_details, only call with the user's own email or name."""
+
+
+def _build_system_prompt(
+    prefetched_context: Optional[dict],
+    is_admin: bool = False,
+    user_email: str = "",
+) -> str:
+    auth = _ADMIN_AUTH if is_admin else _USER_AUTH_TEMPLATE.format(email=user_email)
+    base = _BASE_SYSTEM_PROMPT.replace("{today}", date.today().isoformat()) + auth
+
+    if prefetched_context:
+        base += (
+            "\n\n[PRE-FETCHED: User's contribution data is already loaded — "
+            "use it directly without calling get_contribution unless the user asks about someone else]\n"
+            + json.dumps(prefetched_context, indent=2)
+        )
+    return base
 
 
 # ---------------------------------------------------------------------------
 # Pool-aware generate call
 # ---------------------------------------------------------------------------
 async def _call_with_pool(pool, model: str, contents, config) -> types.GenerateContentResponse:
-    """
-    Call generate_content with automatic key rotation on 429 and retry on 503.
-    - 429: immediately rotates to the next key (no sleep)
-    - 503: retries up to 3 times with exponential backoff on the same key
-    """
+    """Call generate_content with automatic key rotation on 429 and retry on 503."""
     client, key_idx = pool.get_active_client()
 
     for _rotation in range(len(pool._keys) + 1):
@@ -163,9 +390,8 @@ async def _call_with_pool(pool, model: str, contents, config) -> types.GenerateC
             except Exception as e:
                 err = str(e)
                 if "429" in err or "RESOURCE_EXHAUSTED" in err:
-                    # Rotate to next key immediately — no sleep
                     client, key_idx = pool.report_429(key_idx, err)
-                    break   # break attempt loop; outer loop retries with new key
+                    break
                 if ("503" in err or "UNAVAILABLE" in err) and attempt < 2:
                     await asyncio.sleep(2 ** attempt)
                     continue
@@ -182,6 +408,7 @@ async def run_agent_async(
     user_email: str = "",
     history: List[Dict] = None,
     prefetched_context: Optional[dict] = None,
+    is_admin: bool = False,
 ) -> Tuple[str, List[Dict]]:
     """
     Run one conversation turn. Returns (reply_text, updated_history).
@@ -191,6 +418,7 @@ async def run_agent_async(
         user_email:         verified Teams email
         history:            previous turns [{role, text}, ...]
         prefetched_context: get_contribution result already fetched in app.py
+        is_admin:           whether the user is an admin (can see all contributors)
     """
     if history is None:
         history = []
@@ -205,7 +433,7 @@ async def run_agent_async(
         print(f"[agent] AllKeysExhausted at startup: {e}", flush=True)
         return msg, history
 
-    system_prompt = _build_system_prompt(prefetched_context)
+    system_prompt = _build_system_prompt(prefetched_context, is_admin, user_email)
     config = types.GenerateContentConfig(
         system_instruction=system_prompt,
         tools=[_TOOL_CONFIG],
@@ -216,7 +444,6 @@ async def run_agent_async(
     if len(history) > 8:
         history = history[-8:]
 
-    # Build Gemini contents list from history
     contents: List[types.Content] = []
 
     if not history and user_email:
@@ -296,5 +523,8 @@ def run_agent(
     user_email: str = "",
     history: List[Dict] = None,
     prefetched_context: Optional[dict] = None,
+    is_admin: bool = False,
 ) -> Tuple[str, List[Dict]]:
-    return asyncio.run(run_agent_async(user_message, user_email, history or [], prefetched_context))
+    return asyncio.run(
+        run_agent_async(user_message, user_email, history or [], prefetched_context, is_admin)
+    )

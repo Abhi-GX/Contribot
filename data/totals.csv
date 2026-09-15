@@ -1,2 +1,107 @@
-email,name,eligible_points,bonus_usd,row_count,included_statuses
-test_mentor@epam.com,Test Mentor,3.0,45.0,1,1 approved
+email,name,eligible_points,bonus_usd,row_count,included_statuses,total_mentees,total_duration_min
+abhishek_dutta@epam.com,Abhishek Dutta,2.0,30.0,2,2 submitted,18,0
+abhishek_garg@epam.com,Abhishek Garg,7.0,105.0,4,4 submitted,28,0
+abhishek_sarkar@epam.com,Abhishek Sarkar,60.0,900.0,12,12 submitted,36,0
+ajay_chaware@epam.com,Ajay Chaware,9.0,135.0,9,9 submitted,45,0
+ajay_kumar5@epam.com,Ajay Kumar5,7.0,105.0,2,2 submitted,2,0
+ajoy_oommen@epam.com,Ajoy Oommen,28.0,420.0,3,3 submitted,9,0
+akshit_singhal@epam.com,Akshit Singhal,41.0,615.0,6,6 submitted,30,0
+amit_tripathi@epam.com,Amit Tripathi,11.0,165.0,9,9 submitted,36,1960
+anil_kosaraju@epam.com,Anil Kosaraju,55.0,825.0,20,20 submitted,20,0
+ankitkumar_kaswan@epam.com,Ankit Kumar kaswan,1.0,15.0,1,1 submitted,4,60
+anuj_kumar2@epam.com,Anuj Kumar2,85.0,1275.0,19,19 submitted,95,0
+archi_s@epam.com,Archi S,5.0,75.0,5,5 submitted,40,0
+arunakumari_boddeti@epam.com,Aruna Kumari Boddeti,6.25,93.75,5,5 submitted,40,0
+ash2shukla@gmail.com,Ashish Shukla,11.0,165.0,2,2 submitted,4,0
+ashutosh_thorat@epam.com,Ashutosh Thorat,5.0,75.0,1,1 submitted,4,0
+bhagyasree_vonguru@epam.com,Bhagya Sree Vonguru,11.0,165.0,11,11 submitted,69,0
+bhagyesha_machhar@epam.com,Bhagyesh A Machhar,30.0,450.0,30,30 submitted,120,1530
+chaitanya_g@epam.com,Chaitanya G,2.5,37.5,2,2 submitted,2,0
+debajyoti_mohapatra@epam.com,Debajyoti Mohapatra,23.0,345.0,14,14 submitted,69,60
+debajyoti_mukherjee@epam.com,Debajyoti Mukherjee,30.0,450.0,8,8 submitted,32,0
+deepak_ravuri@epam.com,Deepak Ravuri,3.0,45.0,3,3 submitted,17,0
+deepak_sharma3@epam.com,Deepak Sharma3,43.0,645.0,19,19 submitted,57,0
+dhakshanamoorthy_venkatraman@epam.com,Dhakshanamoorthy Venkatraman,9.0,135.0,9,9 submitted,45,545
+dushyant_gupta@epam.com,Dushyant Gupta,15.0,225.0,3,3 submitted,15,0
+gokul_cr@epam.com,Gokul CR,8.0,120.0,1,1 submitted,5,0
+gurkiran_kaur@epam.com,Gurkiran Kaur,26.0,390.0,6,6 submitted,30,0
+harsh_arora@epam.com,Harsh Arora,3.0,45.0,2,2 submitted,80,0
+harshit_agnihotri@epam.com,Harshit Agnihotri,30.0,450.0,6,6 submitted,12,0
+hema_singh@epam.com,Hema Singh,1.0,15.0,1,1 submitted,9,0
+himanshu_dhingra@epam.com,Himanshu Dhingra,1.0,15.0,1,1 submitted,1,0
+jitesh_ahuja@epam.com,Jitesh Ahuja,10.0,150.0,2,2 submitted,10,0
+jyoti_sharma@epam.com,Jyoti Sharma,4.5,67.5,4,4 submitted,31,0
+kajol_mishra@epam.com,Kajol Mishra,2.0,30.0,2,2 submitted,18,0
+kamal_bhatia@epam.com,Kamal Bhatia,17.0,255.0,5,5 submitted,25,0
+kapil_bhalotia@epam.com,Kapil Bhalotia,55.0,825.0,11,11 submitted,44,0
+karan_sachdev@epam.com,Karan Sachdev,8.0,120.0,2,2 submitted,8,0
+kavya_kudumula@epam.com,Kavya Kudumula,7.0,105.0,7,7 submitted,38,0
+kishore_k@epam.com,Kishore K,2.0,30.0,2,2 submitted,12,0
+kranthiveer_tummuri@epam.com,Kranthiveer Tummuri,49.0,735.0,31,31 submitted,136,600
+krishan_sharma1@epam.com,Krishan Sharma1,10.0,150.0,2,2 submitted,10,0
+krishnachandra_boyapati@epam.com,Krishnachandra Boyapati,5.0,75.0,2,2 submitted,4,0
+lathasree_bobburi@epam.com,Lathasree Bobburi,16.0,240.0,13,13 submitted,52,1170
+lekhashree_sathyanarayanan@epam.com,Lekhashree Sathyanarayanan,17.0,255.0,10,10 submitted,20,60
+malarpriya_murugesan@epam.com,Malar Priya Murugesan,2.0,30.0,2,2 submitted,18,0
+manoj_t@epam.com,Manoj T,7.0,105.0,6,6 submitted,170,0
+mansi_manhas@epam.com,Mansi Manhas,5.0,75.0,5,5 submitted,25,330
+manuj_sangwan@epam.com,Manuj Sangwan,10.0,150.0,2,2 submitted,10,0
+meetu_sharma@epam.com,Meetu Sharma,16.0,240.0,4,4 submitted,36,0
+mohammadhatifraza_khan@epam.com,Mohammadhatifraza Khan,4.0,60.0,4,4 submitted,8,185
+mrinal_ghosh@epam.com,Mrinal Ghosh,11.0,165.0,11,11 submitted,41,545
+mudassir_rehman@epam.com,Mudassir Rehman,28.0,420.0,6,6 submitted,24,0
+nagesh_manda@epam.com,Nagesh Manda,30.0,450.0,13,13 submitted,13,0
+nalini_pratapchandran@epam.com,Nalini Pratapchandran,11.0,165.0,8,8 submitted,19,0
+narmada_nayunipati@epam.com,Narmada Nayunipati,5.0,75.0,1,1 submitted,1,0
+navin_kumar@epam.com,Navin Kumar,12.0,180.0,4,4 submitted,24,0
+pankaj_gupta2@epam.com,Pankaj Gupta2,5.0,75.0,5,5 submitted,20,300
+poosa_ramesh@epam.com,Poosa Ramesh,2.0,30.0,2,2 submitted,18,0
+pradip_patra@epam.com,Pradip Patra,21.0,315.0,7,7 submitted,49,0
+pranay_gampa@epam.com,Pranay Gampa,54.67,820.05,34,34 submitted,266,0
+pranay_mudi@epam.com,Pranay Mudi,65.0,975.0,31,31 submitted,132,120
+prasath_kv@epam.com,Prasath K v,9.0,135.0,6,6 submitted,21,300
+prashuk_jain@epam.com,Prashuk Jain,2.0,30.0,1,1 submitted,1,0
+praveen_eruvanti@epam.com,Praveen Eruvanti,62.0,930.0,21,21 submitted,21,0
+praveenmuthukumar_gnanaraj@epam.com,Praveenmuthukumar Gnanaraj,4.0,60.0,4,4 submitted,16,330
+preeti_talasila@epam.com,Preeti Talasila,6.0,90.0,6,6 submitted,6,0
+raghuram_vallabhapurapu@epam.com,Raghu Ram Vallabhapurapu,3.0,45.0,3,3 submitted,22,0
+rahul_sharma14@epam.com,Rahul Sharma14,8.0,120.0,6,6 submitted,6,0
+rajat_kumar@epam.com,Rajat Kumar,40.0,600.0,8,8 submitted,24,0
+rajat_singh1@epam.com,Rajat Singh1,49.0,735.0,7,7 submitted,35,0
+ravisankar_bhagavathula@epam.com,Ravi Sankar Bhagavathula,7.5,112.5,7,7 submitted,63,0
+rishab_trivedi@epam.com,Rishab Trivedi,8.0,120.0,1,1 submitted,4,0
+rohima_pasupulati@epam.com,Rohima Pasupulati,13.0,195.0,7,7 submitted,7,0
+rojaramyasri_bobburi@epam.com,Rojaramyasri Bobburi,35.0,525.0,16,16 submitted,70,720
+ruby_paul@epam.com,Ruby Paul,1.0,15.0,1,1 submitted,9,0
+sahil_shikalgar@epam.com,Sahil Shikalgar,7.0,105.0,7,7 submitted,34,300
+saikarthik_vankadari@epam.com,Sai Karthik Vankadari,20.0,300.0,11,11 submitted,40,1170
+saikrishna_tammi@epam.com,Saikrishna Tammi,9.0,135.0,9,9 submitted,37,450
+sairam_bomma@epam.com,Sairam Bomma,6.0,90.0,6,6 submitted,18,390
+sairam_narkedmalli@epam.com,Sairam Narkedmalli,100.92,1513.8,53,53 submitted,377,0
+salil_ahuja@epam.com,Salil Ahuja,6.0,90.0,6,6 submitted,21,300
+samruddhi_kulkarni@epam.com,Samruddhi Kulkarni,15.0,225.0,3,3 submitted,3,0
+sandeepkumar_vangara@epam.com,Sandeep Kumar Vangara,7.0,105.0,2,2 submitted,2,0
+saniddhya_nigam@epam.com,Saniddhya Nigam,4.0,60.0,4,4 submitted,20,120
+saroj_kumar@epam.com,Saroj Kumar,8.0,120.0,1,1 submitted,4,0
+shankul_rai@epam.com,Shankul Rai,16.0,240.0,12,12 submitted,48,0
+shubham_agarwal5@epam.com,Shubham Agarwal5,4.0,60.0,4,4 submitted,16,240
+shubham_kumbhar@epam.com,Shubham Kumbhar,24.0,360.0,6,6 submitted,24,0
+siddharth_garewal@epam.com,Siddharth Garewal,4.0,60.0,4,4 submitted,20,240
+sidharth_muralidharan@epam.com,Sidharth Muralidharan,8.0,120.0,8,8 submitted,24,1050
+sivasankar_nagireddy@epam.com,Sivasankar Nagireddy,3.0,45.0,3,3 submitted,12,90
+sneha_agarwal1@epam.com,Sneha Agarwal1,8.0,120.0,2,2 submitted,2,0
+sonali_kumari1@epam.com,Sonali Kumari1,35.0,525.0,7,7 submitted,35,0
+sonukumar_singh@epam.com,Sonu Kumar Singh,2.0,30.0,1,1 submitted,4,0
+sricharan_peddinti@epam.com,Sricharan Peddinti,12.0,180.0,7,7 submitted,21,1014
+sriharsha_avanchi@epam.com,Sriharsha Avanchi,12.0,180.0,4,4 submitted,24,0
+sujith_mogallapalli@epam.com,Sujith Mogallapalli,6.0,90.0,6,6 submitted,18,1350
+tejaswini_mysoola@epam.com,Tejaswini Mysoola,5.0,75.0,1,1 submitted,1,0
+tejaswini_yellayyagari@epam.com,Tejaswini Yellayyagari,9.0,135.0,9,9 submitted,45,485
+vaidyanathan_lakshminarayanan@epam.com,Vaidyanathan Lakshminarayanan,5.0,75.0,1,1 submitted,1,0
+vandana_shekhar@epam.com,Vandana Shekhar,1.0,15.0,1,1 submitted,1,0
+vasanth_kalaimani@epam.com,Vasanth Kalaimani,20.0,300.0,8,8 submitted,24,315
+vedvrat_lodhi@epam.com,Vedvrat Lodhi,52.0,780.0,12,12 submitted,12,0
+venkatasubramanian_cb@epam.com,Venkatasubramanian Cb,8.0,120.0,8,8 submitted,40,480
+venkatesh_dosakanti@epam.com,Venkatesh Dosakanti,4.0,60.0,4,4 submitted,16,1485
+vikas_myadam@epam.com,Vikas Myadam,5.0,75.0,5,5 submitted,20,300
+vivek_keshore@epam.com,Vivek Keshore,19.0,285.0,3,3 submitted,6,0

@@ -1,0 +1,1085 @@
+{
+  "Business Analysis": [
+    {
+      "name": "Abhishek Dutta",
+      "email": "abhishek_dutta@epam.com",
+      "eligible_points": 2.0,
+      "bonus_usd": 30.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,"
+      ]
+    },
+    {
+      "name": "Abhishek Garg",
+      "email": "abhishek_garg@epam.com",
+      "eligible_points": 7.0,
+      "bonus_usd": 105.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,",
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Archi S",
+      "email": "archi_s@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning BA Interns April 27th",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026"
+      ]
+    },
+    {
+      "name": "Aruna Kumari Boddeti",
+      "email": "arunakumari_boddeti@epam.com",
+      "eligible_points": 6.25,
+      "bonus_usd": 93.75,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,",
+        "[Specialization] Business Analysis. Microlearning BA Interns April 27th"
+      ]
+    },
+    {
+      "name": "Bhagya Sree Vonguru",
+      "email": "bhagyasree_vonguru@epam.com",
+      "eligible_points": 11.0,
+      "bonus_usd": 165.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026"
+      ]
+    },
+    {
+      "name": "Deepak Ravuri",
+      "email": "deepak_ravuri@epam.com",
+      "eligible_points": 3.0,
+      "bonus_usd": 45.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,"
+      ]
+    },
+    {
+      "name": "Hema Singh",
+      "email": "hema_singh@epam.com",
+      "eligible_points": 1.0,
+      "bonus_usd": 15.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026"
+      ]
+    },
+    {
+      "name": "Jyoti Sharma",
+      "email": "jyoti_sharma@epam.com",
+      "eligible_points": 4.5,
+      "bonus_usd": 67.5,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning BA Interns April 27th",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,"
+      ]
+    },
+    {
+      "name": "Kajol Mishra",
+      "email": "kajol_mishra@epam.com",
+      "eligible_points": 2.0,
+      "bonus_usd": 30.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,"
+      ]
+    },
+    {
+      "name": "Kavya Kudumula",
+      "email": "kavya_kudumula@epam.com",
+      "eligible_points": 7.0,
+      "bonus_usd": 105.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026"
+      ]
+    },
+    {
+      "name": "Malar Priya Murugesan",
+      "email": "malarpriya_murugesan@epam.com",
+      "eligible_points": 2.0,
+      "bonus_usd": 30.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,"
+      ]
+    },
+    {
+      "name": "Meetu Sharma",
+      "email": "meetu_sharma@epam.com",
+      "eligible_points": 16.0,
+      "bonus_usd": 240.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026"
+      ]
+    },
+    {
+      "name": "Nalini Pratapchandran",
+      "email": "nalini_pratapchandran@epam.com",
+      "eligible_points": 11.0,
+      "bonus_usd": 165.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning BA Interns April 27th",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Poosa Ramesh",
+      "email": "poosa_ramesh@epam.com",
+      "eligible_points": 2.0,
+      "bonus_usd": 30.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,"
+      ]
+    },
+    {
+      "name": "Pranay Gampa",
+      "email": "pranay_gampa@epam.com",
+      "eligible_points": 54.67,
+      "bonus_usd": 820.05,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning BA Interns April 27th",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,"
+      ]
+    },
+    {
+      "name": "Raghu Ram Vallabhapurapu",
+      "email": "raghuram_vallabhapurapu@epam.com",
+      "eligible_points": 3.0,
+      "bonus_usd": 45.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Business Analysis. Microlearning BA Interns April 27th"
+      ]
+    },
+    {
+      "name": "Ravi Sankar Bhagavathula",
+      "email": "ravisankar_bhagavathula@epam.com",
+      "eligible_points": 7.5,
+      "bonus_usd": 112.5,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026"
+      ]
+    },
+    {
+      "name": "Ruby Paul",
+      "email": "ruby_paul@epam.com",
+      "eligible_points": 1.0,
+      "bonus_usd": 15.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026"
+      ]
+    },
+    {
+      "name": "Sairam Narkedmalli",
+      "email": "sairam_narkedmalli@epam.com",
+      "eligible_points": 100.92,
+      "bonus_usd": 1513.8,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning BA Interns April 27th",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,"
+      ]
+    }
+  ],
+  "JavaScript": [
+    {
+      "name": "Abhishek Garg",
+      "email": "abhishek_garg@epam.com",
+      "eligible_points": 7.0,
+      "bonus_usd": 105.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning Interns April 1st 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Business Analysis. Microlearning RD April 1st, 2026,",
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Himanshu Dhingra",
+      "email": "himanshu_dhingra@epam.com",
+      "eligible_points": 1.0,
+      "bonus_usd": 15.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Mansi Manhas",
+      "email": "mansi_manhas@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Aug Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Mrinal Ghosh",
+      "email": "mrinal_ghosh@epam.com",
+      "eligible_points": 11.0,
+      "bonus_usd": 165.0,
+      "learning_paths": [
+        "JavaScript fullstack - Jan Batch 01 - 2026",
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Prasath K v",
+      "email": "prasath_kv@epam.com",
+      "eligible_points": 9.0,
+      "bonus_usd": 135.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 2"
+      ]
+    },
+    {
+      "name": "Praveenmuthukumar Gnanaraj",
+      "email": "praveenmuthukumar_gnanaraj@epam.com",
+      "eligible_points": 4.0,
+      "bonus_usd": 60.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 2"
+      ]
+    },
+    {
+      "name": "Sahil Shikalgar",
+      "email": "sahil_shikalgar@epam.com",
+      "eligible_points": 7.0,
+      "bonus_usd": 105.0,
+      "learning_paths": [
+        "JavaScript fullstack - Jan batch 02 - 2026",
+        "[Specialization] JavaScript Full-Stack - Aug Batch - Team 2"
+      ]
+    },
+    {
+      "name": "Saikrishna Tammi",
+      "email": "saikrishna_tammi@epam.com",
+      "eligible_points": 9.0,
+      "bonus_usd": 135.0,
+      "learning_paths": [
+        "JavaScript fullstack - Jan Batch 01 - 2026",
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 2"
+      ]
+    },
+    {
+      "name": "Sairam Bomma",
+      "email": "sairam_bomma@epam.com",
+      "eligible_points": 6.0,
+      "bonus_usd": 90.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 2"
+      ]
+    },
+    {
+      "name": "Salil Ahuja",
+      "email": "salil_ahuja@epam.com",
+      "eligible_points": 6.0,
+      "bonus_usd": 90.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 2"
+      ]
+    },
+    {
+      "name": "Saniddhya Nigam",
+      "email": "saniddhya_nigam@epam.com",
+      "eligible_points": 4.0,
+      "bonus_usd": 60.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Aug Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Shubham Agarwal5",
+      "email": "shubham_agarwal5@epam.com",
+      "eligible_points": 4.0,
+      "bonus_usd": 60.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Siddharth Garewal",
+      "email": "siddharth_garewal@epam.com",
+      "eligible_points": 4.0,
+      "bonus_usd": 60.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Aug Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Sidharth Muralidharan",
+      "email": "sidharth_muralidharan@epam.com",
+      "eligible_points": 8.0,
+      "bonus_usd": 120.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Sneha Agarwal1",
+      "email": "sneha_agarwal1@epam.com",
+      "eligible_points": 8.0,
+      "bonus_usd": 120.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Venkatasubramanian Cb",
+      "email": "venkatasubramanian_cb@epam.com",
+      "eligible_points": 8.0,
+      "bonus_usd": 120.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Vikas Myadam",
+      "email": "vikas_myadam@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 2"
+      ]
+    }
+  ],
+  "Java": [
+    {
+      "name": "Abhishek Sarkar",
+      "email": "abhishek_sarkar@epam.com",
+      "eligible_points": 60.0,
+      "bonus_usd": 900.0,
+      "learning_paths": [
+        "Java - Explora - December-25 - Campus India"
+      ]
+    },
+    {
+      "name": "Ajay Kumar5",
+      "email": "ajay_kumar5@epam.com",
+      "eligible_points": 7.0,
+      "bonus_usd": 105.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Amit Tripathi",
+      "email": "amit_tripathi@epam.com",
+      "eligible_points": 11.0,
+      "bonus_usd": 165.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - B01",
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Anuj Kumar2",
+      "email": "anuj_kumar2@epam.com",
+      "eligible_points": 85.0,
+      "bonus_usd": 1275.0,
+      "learning_paths": [
+        "[Beginner] Core Java - The Explora - Nov'25"
+      ]
+    },
+    {
+      "name": "Ashutosh Thorat",
+      "email": "ashutosh_thorat@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Beginner] Core Java - The Explora - Nov'25"
+      ]
+    },
+    {
+      "name": "Chaitanya G",
+      "email": "chaitanya_g@epam.com",
+      "eligible_points": 2.5,
+      "bonus_usd": 37.5,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B02"
+      ]
+    },
+    {
+      "name": "Dushyant Gupta",
+      "email": "dushyant_gupta@epam.com",
+      "eligible_points": 15.0,
+      "bonus_usd": 225.0,
+      "learning_paths": [
+        "[Beginner] Core Java - The Explora - Nov'25"
+      ]
+    },
+    {
+      "name": "Gurkiran Kaur",
+      "email": "gurkiran_kaur@epam.com",
+      "eligible_points": 26.0,
+      "bonus_usd": 390.0,
+      "learning_paths": [
+        "Java - Explora - December-25 - Campus India"
+      ]
+    },
+    {
+      "name": "Harshit Agnihotri",
+      "email": "harshit_agnihotri@epam.com",
+      "eligible_points": 30.0,
+      "bonus_usd": 450.0,
+      "learning_paths": [
+        "[Beginner] Core Java - The Explora - Nov'25"
+      ]
+    },
+    {
+      "name": "Jitesh Ahuja",
+      "email": "jitesh_ahuja@epam.com",
+      "eligible_points": 10.0,
+      "bonus_usd": 150.0,
+      "learning_paths": [
+        "Java - Explora - November-25 - Campus India"
+      ]
+    },
+    {
+      "name": "Kapil Bhalotia",
+      "email": "kapil_bhalotia@epam.com",
+      "eligible_points": 55.0,
+      "bonus_usd": 825.0,
+      "learning_paths": [
+        "Java - Explora - December-25 - Campus India"
+      ]
+    },
+    {
+      "name": "Karan Sachdev",
+      "email": "karan_sachdev@epam.com",
+      "eligible_points": 8.0,
+      "bonus_usd": 120.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Krishan Sharma1",
+      "email": "krishan_sharma1@epam.com",
+      "eligible_points": 10.0,
+      "bonus_usd": 150.0,
+      "learning_paths": [
+        "[Beginner] Core Java - The Explora - Nov'25"
+      ]
+    },
+    {
+      "name": "Krishnachandra Boyapati",
+      "email": "krishnachandra_boyapati@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - B02"
+      ]
+    },
+    {
+      "name": "Lathasree Bobburi",
+      "email": "lathasree_bobburi@epam.com",
+      "eligible_points": 16.0,
+      "bonus_usd": 240.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - B01",
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Manuj Sangwan",
+      "email": "manuj_sangwan@epam.com",
+      "eligible_points": 10.0,
+      "bonus_usd": 150.0,
+      "learning_paths": [
+        "Java - Explora - November-25 - Campus India"
+      ]
+    },
+    {
+      "name": "Mohammadhatifraza Khan",
+      "email": "mohammadhatifraza_khan@epam.com",
+      "eligible_points": 4.0,
+      "bonus_usd": 60.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B02"
+      ]
+    },
+    {
+      "name": "Mudassir Rehman",
+      "email": "mudassir_rehman@epam.com",
+      "eligible_points": 28.0,
+      "bonus_usd": 420.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Nagesh Manda",
+      "email": "nagesh_manda@epam.com",
+      "eligible_points": 30.0,
+      "bonus_usd": 450.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - B01",
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Nalini Pratapchandran",
+      "email": "nalini_pratapchandran@epam.com",
+      "eligible_points": 11.0,
+      "bonus_usd": 165.0,
+      "learning_paths": [
+        "[Specialization] Business Analysis. Microlearning BA Interns April 27th",
+        "[Specialization] Business Analysis. Microlearning RD April 27th 2026",
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Narmada Nayunipati",
+      "email": "narmada_nayunipati@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Rahul Sharma14",
+      "email": "rahul_sharma14@epam.com",
+      "eligible_points": 8.0,
+      "bonus_usd": 120.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Rajat Kumar",
+      "email": "rajat_kumar@epam.com",
+      "eligible_points": 40.0,
+      "bonus_usd": 600.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Rohima Pasupulati",
+      "email": "rohima_pasupulati@epam.com",
+      "eligible_points": 13.0,
+      "bonus_usd": 195.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Rojaramyasri Bobburi",
+      "email": "rojaramyasri_bobburi@epam.com",
+      "eligible_points": 35.0,
+      "bonus_usd": 525.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - B03",
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B02"
+      ]
+    },
+    {
+      "name": "Sai Karthik Vankadari",
+      "email": "saikarthik_vankadari@epam.com",
+      "eligible_points": 20.0,
+      "bonus_usd": 300.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Samruddhi Kulkarni",
+      "email": "samruddhi_kulkarni@epam.com",
+      "eligible_points": 15.0,
+      "bonus_usd": 225.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - B01"
+      ]
+    },
+    {
+      "name": "Sandeep Kumar Vangara",
+      "email": "sandeepkumar_vangara@epam.com",
+      "eligible_points": 7.0,
+      "bonus_usd": 105.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Shubham Kumbhar",
+      "email": "shubham_kumbhar@epam.com",
+      "eligible_points": 24.0,
+      "bonus_usd": 360.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Sonali Kumari1",
+      "email": "sonali_kumari1@epam.com",
+      "eligible_points": 35.0,
+      "bonus_usd": 525.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Sricharan Peddinti",
+      "email": "sricharan_peddinti@epam.com",
+      "eligible_points": 12.0,
+      "bonus_usd": 180.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Sujith Mogallapalli",
+      "email": "sujith_mogallapalli@epam.com",
+      "eligible_points": 6.0,
+      "bonus_usd": 90.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B01"
+      ]
+    },
+    {
+      "name": "Tejaswini Mysoola",
+      "email": "tejaswini_mysoola@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - Managed Services"
+      ]
+    },
+    {
+      "name": "Tejaswini Yellayyagari",
+      "email": "tejaswini_yellayyagari@epam.com",
+      "eligible_points": 9.0,
+      "bonus_usd": 135.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B02"
+      ]
+    },
+    {
+      "name": "Vaidyanathan Lakshminarayanan",
+      "email": "vaidyanathan_lakshminarayanan@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Specialization] Java - Explora - JAN'26 - B01"
+      ]
+    },
+    {
+      "name": "Vandana Shekhar",
+      "email": "vandana_shekhar@epam.com",
+      "eligible_points": 1.0,
+      "bonus_usd": 15.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B02"
+      ]
+    },
+    {
+      "name": "Venkatesh Dosakanti",
+      "email": "venkatesh_dosakanti@epam.com",
+      "eligible_points": 4.0,
+      "bonus_usd": 60.0,
+      "learning_paths": [
+        "[Specialization] Socratic Learning - Java - Jun'26 - Managed Services - B02"
+      ]
+    }
+  ],
+  "Test Automation": [
+    {
+      "name": "Ajay Chaware",
+      "email": "ajay_chaware@epam.com",
+      "eligible_points": 9.0,
+      "bonus_usd": 135.0,
+      "learning_paths": [
+        "[Specialization] Automated Testing in Java. Socratic Learning #B02"
+      ]
+    },
+    {
+      "name": "Debajyoti Mohapatra",
+      "email": "debajyoti_mohapatra@epam.com",
+      "eligible_points": 23.0,
+      "bonus_usd": 345.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora - Jan'26 -B02",
+        "[Specialization] Automated Testing in Java. Socratic Learning #B02"
+      ]
+    },
+    {
+      "name": "Debajyoti Mukherjee",
+      "email": "debajyoti_mukherjee@epam.com",
+      "eligible_points": 30.0,
+      "bonus_usd": 450.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora .Dec'25"
+      ]
+    },
+    {
+      "name": "Deepak Sharma3",
+      "email": "deepak_sharma3@epam.com",
+      "eligible_points": 43.0,
+      "bonus_usd": 645.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora .Dec'25"
+      ]
+    },
+    {
+      "name": "Dhakshanamoorthy Venkatraman",
+      "email": "dhakshanamoorthy_venkatraman@epam.com",
+      "eligible_points": 9.0,
+      "bonus_usd": 135.0,
+      "learning_paths": [
+        "[Specialization] Automated Testing in Java. Socratic Learning #B01"
+      ]
+    },
+    {
+      "name": "Kishore K",
+      "email": "kishore_k@epam.com",
+      "eligible_points": 2.0,
+      "bonus_usd": 30.0,
+      "learning_paths": [
+        "[Specialization] Automated Testing in Java. Socratic Learning #B01"
+      ]
+    },
+    {
+      "name": "Kranthiveer Tummuri",
+      "email": "kranthiveer_tummuri@epam.com",
+      "eligible_points": 49.0,
+      "bonus_usd": 735.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora .Dec'25",
+        "[Specialization] Automated Testing in Java. Socratic Learning #B02"
+      ]
+    },
+    {
+      "name": "Lekhashree Sathyanarayanan",
+      "email": "lekhashree_sathyanarayanan@epam.com",
+      "eligible_points": 17.0,
+      "bonus_usd": 255.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora .Dec'25"
+      ]
+    },
+    {
+      "name": "Pankaj Gupta2",
+      "email": "pankaj_gupta2@epam.com",
+      "eligible_points": 5.0,
+      "bonus_usd": 75.0,
+      "learning_paths": [
+        "[Specialization] Automated Testing in Java. Socratic Learning #B02"
+      ]
+    },
+    {
+      "name": "Pradip Patra",
+      "email": "pradip_patra@epam.com",
+      "eligible_points": 21.0,
+      "bonus_usd": 315.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora - Jan'26 -B01"
+      ]
+    },
+    {
+      "name": "Pranay Mudi",
+      "email": "pranay_mudi@epam.com",
+      "eligible_points": 65.0,
+      "bonus_usd": 975.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora .Dec'25",
+        "[Specialization] Automated Testing in Java. Socratic Learning #B01"
+      ]
+    },
+    {
+      "name": "Praveen Eruvanti",
+      "email": "praveen_eruvanti@epam.com",
+      "eligible_points": 62.0,
+      "bonus_usd": 930.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora - Jan'26 -B02"
+      ]
+    },
+    {
+      "name": "Preeti Talasila",
+      "email": "preeti_talasila@epam.com",
+      "eligible_points": 6.0,
+      "bonus_usd": 90.0,
+      "learning_paths": [
+        "[Specialization] Automated Testing in Java. Socratic Learning #B02"
+      ]
+    },
+    {
+      "name": "Shankul Rai",
+      "email": "shankul_rai@epam.com",
+      "eligible_points": 16.0,
+      "bonus_usd": 240.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora .Dec'25"
+      ]
+    },
+    {
+      "name": "Sriharsha Avanchi",
+      "email": "sriharsha_avanchi@epam.com",
+      "eligible_points": 12.0,
+      "bonus_usd": 180.0,
+      "learning_paths": [
+        "[Specialization] Automated testing in Java. Explora - Jan'26 -B01"
+      ]
+    }
+  ],
+  "Python": [
+    {
+      "name": "Ajoy Oommen",
+      "email": "ajoy_oommen@epam.com",
+      "eligible_points": 28.0,
+      "bonus_usd": 420.0,
+      "learning_paths": [
+        "Python RD program - Sept, 25"
+      ]
+    },
+    {
+      "name": "Akshit Singhal",
+      "email": "akshit_singhal@epam.com",
+      "eligible_points": 41.0,
+      "bonus_usd": 615.0,
+      "learning_paths": [
+        "Python RD program - Batch #10(Automation Testing)"
+      ]
+    },
+    {
+      "name": "Ankit Kumar kaswan",
+      "email": "ankitkumar_kaswan@epam.com",
+      "eligible_points": 1.0,
+      "bonus_usd": 15.0,
+      "learning_paths": [
+        "PyIN Campus26 Batch#3"
+      ]
+    },
+    {
+      "name": "Ashish Shukla",
+      "email": "ash2shukla@gmail.com",
+      "eligible_points": 11.0,
+      "bonus_usd": 165.0,
+      "learning_paths": [
+        "Python RD program - Sept, 25"
+      ]
+    },
+    {
+      "name": "Gokul CR",
+      "email": "gokul_cr@epam.com",
+      "eligible_points": 8.0,
+      "bonus_usd": 120.0,
+      "learning_paths": [
+        "PyIN Campus26 Batch#2 (MS)"
+      ]
+    },
+    {
+      "name": "Kamal Bhatia",
+      "email": "kamal_bhatia@epam.com",
+      "eligible_points": 17.0,
+      "bonus_usd": 255.0,
+      "learning_paths": [
+        "Python RD program - Batch #10(Automation Testing)"
+      ]
+    },
+    {
+      "name": "Navin Kumar",
+      "email": "navin_kumar@epam.com",
+      "eligible_points": 12.0,
+      "bonus_usd": 180.0,
+      "learning_paths": [
+        "Python RD program - Batch #10(Automation Testing)"
+      ]
+    },
+    {
+      "name": "Rajat Singh1",
+      "email": "rajat_singh1@epam.com",
+      "eligible_points": 49.0,
+      "bonus_usd": 735.0,
+      "learning_paths": [
+        "Python RD program - Batch #10(Automation Testing)",
+        "PyIN Campus26 Batch#2 (MS)"
+      ]
+    },
+    {
+      "name": "Rishab Trivedi",
+      "email": "rishab_trivedi@epam.com",
+      "eligible_points": 8.0,
+      "bonus_usd": 120.0,
+      "learning_paths": [
+        "PyIN Campus26 Batch#2 (MS)"
+      ]
+    },
+    {
+      "name": "Saroj Kumar",
+      "email": "saroj_kumar@epam.com",
+      "eligible_points": 8.0,
+      "bonus_usd": 120.0,
+      "learning_paths": [
+        "PyIN Campus26 Batch#2 (MS)"
+      ]
+    },
+    {
+      "name": "Sonu Kumar Singh",
+      "email": "sonukumar_singh@epam.com",
+      "eligible_points": 2.0,
+      "bonus_usd": 30.0,
+      "learning_paths": [
+        "PyIN Campus26 Batch#2 (MS)"
+      ]
+    },
+    {
+      "name": "Vivek Keshore",
+      "email": "vivek_keshore@epam.com",
+      "eligible_points": 19.0,
+      "bonus_usd": 285.0,
+      "learning_paths": [
+        "Python RD program - Sept, 25"
+      ]
+    }
+  ],
+  "Test Automation in Python": [
+    {
+      "name": "Anil Kosaraju",
+      "email": "anil_kosaraju@epam.com",
+      "eligible_points": 55.0,
+      "bonus_usd": 825.0,
+      "learning_paths": [
+        "[Specialization] Automated Testing in Python. IND"
+      ]
+    }
+  ],
+  "DevOps": [
+    {
+      "name": "Bhagyesh A Machhar",
+      "email": "bhagyesha_machhar@epam.com",
+      "eligible_points": 30.0,
+      "bonus_usd": 450.0,
+      "learning_paths": [
+        "[Beginner] Cloud & DevOps IN-05 AWS",
+        "[Fundamentals] Cloud & DevOps IN-05 AWS",
+        "[Specialization] DevOps BootCamp: AWS IN-05"
+      ]
+    }
+  ],
+  "Cloud and DevOps": [
+    {
+      "name": "Bhagyesh A Machhar",
+      "email": "bhagyesha_machhar@epam.com",
+      "eligible_points": 30.0,
+      "bonus_usd": 450.0,
+      "learning_paths": [
+        "[Beginner] Cloud & DevOps IN-05 AWS",
+        "[Fundamentals] Cloud & DevOps IN-05 AWS",
+        "[Specialization] DevOps BootCamp: AWS IN-05"
+      ]
+    },
+    {
+      "name": "Sivasankar Nagireddy",
+      "email": "sivasankar_nagireddy@epam.com",
+      "eligible_points": 3.0,
+      "bonus_usd": 45.0,
+      "learning_paths": [
+        "[Specialization] DevOps BootCamp: AWS IN-05"
+      ]
+    }
+  ],
+  "Data Software Engineering": [
+    {
+      "name": "Harsh Arora",
+      "email": "harsh_arora@epam.com",
+      "eligible_points": 3.0,
+      "bonus_usd": 45.0,
+      "learning_paths": [
+        "[Fundamentals] Data Software Engineering | Sadhaka ON Campus Program 2025"
+      ]
+    },
+    {
+      "name": "Manoj T",
+      "email": "manoj_t@epam.com",
+      "eligible_points": 7.0,
+      "bonus_usd": 105.0,
+      "learning_paths": [
+        "[Fundamentals] Data Software Engineering | Sadhaka ON Campus Program 2025"
+      ]
+    }
+  ],
+  "Learning": [
+    {
+      "name": "Mrinal Ghosh",
+      "email": "mrinal_ghosh@epam.com",
+      "eligible_points": 11.0,
+      "bonus_usd": 165.0,
+      "learning_paths": [
+        "JavaScript fullstack - Jan Batch 01 - 2026",
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 1"
+      ]
+    },
+    {
+      "name": "Sahil Shikalgar",
+      "email": "sahil_shikalgar@epam.com",
+      "eligible_points": 7.0,
+      "bonus_usd": 105.0,
+      "learning_paths": [
+        "JavaScript fullstack - Jan batch 02 - 2026",
+        "[Specialization] JavaScript Full-Stack - Aug Batch - Team 2"
+      ]
+    },
+    {
+      "name": "Saikrishna Tammi",
+      "email": "saikrishna_tammi@epam.com",
+      "eligible_points": 9.0,
+      "bonus_usd": 135.0,
+      "learning_paths": [
+        "JavaScript fullstack - Jan Batch 01 - 2026",
+        "[Specialization] JavaScript Full-Stack - Jun Batch - Team 2"
+      ]
+    },
+    {
+      "name": "Vasanth Kalaimani",
+      "email": "vasanth_kalaimani@epam.com",
+      "eligible_points": 20.0,
+      "bonus_usd": 300.0,
+      "learning_paths": [
+        "AT in JS 2026"
+      ]
+    }
+  ],
+  ".Net": [
+    {
+      "name": "Prashuk Jain",
+      "email": "prashuk_jain@epam.com",
+      "eligible_points": 2.0,
+      "bonus_usd": 30.0,
+      "learning_paths": [
+        "[Specialization] .NET IND MLM Path - Explora_Jan2026_2"
+      ]
+    },
+    {
+      "name": "Vedvrat Lodhi",
+      "email": "vedvrat_lodhi@epam.com",
+      "eligible_points": 52.0,
+      "bonus_usd": 780.0,
+      "learning_paths": [
+        "[Specialization] .NET IND MLM Path - Explora_Jan2026_2"
+      ]
+    }
+  ]
+}
