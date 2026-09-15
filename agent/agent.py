@@ -36,7 +36,7 @@ from .tools import (
 )
 from .key_pool import get_pool, AllKeysExhausted
 
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 
 # ---------------------------------------------------------------------------

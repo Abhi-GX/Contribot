@@ -217,7 +217,7 @@ class GeminiKeyPool:
             result.append(entry)
         return result
 
-    async def validate_all_keys(self) -> List[dict]:
+    async def validate_all_keys(self, model: str = "gemini-2.5-flash") -> List[dict]:
         """
         Probe each key against the Gemini API with a minimal async request.
 
@@ -238,7 +238,7 @@ class GeminiKeyPool:
                 # Use aio (async) client — same path as agent.py
                 test_client = genai.Client(api_key=k.key)
                 await test_client.aio.models.generate_content(
-                    model="gemini-2.0-flash",
+                    model=model,
                     contents="hi",
                     config=genai_types.GenerateContentConfig(max_output_tokens=5),
                 )

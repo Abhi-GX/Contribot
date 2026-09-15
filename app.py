@@ -1197,8 +1197,9 @@ async def route_keys_validate(req: Request) -> Response:
     if not _check_admin_auth(req):
         return json_response({"error": "Unauthorized"}, status=401)
     from agent.key_pool import get_pool
+    from agent.agent import MODEL
     try:
-        results = await get_pool().validate_all_keys()
+        results = await get_pool().validate_all_keys(model=MODEL)
         return json_response({"keys": results})
     except Exception as e:
         return json_response({"error": str(e)}, status=500)
